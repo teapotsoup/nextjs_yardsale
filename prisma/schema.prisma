@@ -1,23 +1,33 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+//schema.prisma 파일은 프리스마 설정을 하고, 데이터가 어떻게 생겼는지 정의하는 파일
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  previewFeatures = ["referentialIntegrity"] 
+  //외래키 참조 무결성 설정
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
   referentialIntegrity = "prisma"
+   //외래키 참조 무결성 설정
 }
 
 model User{
   id Int @id @default(autoincrement())
-  phone Int? @unique
+  phone BigInt? @unique
   email String? @unique
   name String
   avatar String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  tokens Token[]
+}
+model Token{
+   id Int @id @default(autoincrement())
+   payload String @unique
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+   createdAt DateTime @default(now())
+   updatedAt DateTime @updatedAt
+   userId Int
 }
