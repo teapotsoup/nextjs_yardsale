@@ -1,7 +1,6 @@
 import twilio from "twilio";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
-import smtpTransport from "@libs/server/email";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
@@ -12,7 +11,7 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   const { phone, email } = req.body;
-  const user = phone ? { phone: +phone } : email ? { email } : null;
+  const user = phone ? { phone } : (email ? { email } : null);
   if (!user) return res.status(400).json({ ok: false });
   const payload = Math.floor(100000 + Math.random() * 900000) + "";
   const token = await client.token.create({
@@ -66,7 +65,11 @@ async function handler(
   });
 }
 
-export default withHandler("POST", handler);
+export default withHandler({
+  methods: ["POST"],
+  handler,
+  isPrivate:false
+});
 
 // console.log("페이로드:",payload)
 // if (phone) {
