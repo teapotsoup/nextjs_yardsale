@@ -21,13 +21,10 @@ type MutationResult = {
 };
 
 const Enter: NextPage = () => {
-  const [enter, { loading, data, error }] =
-    useMutation<MutationResult>("/api/users/enter");
-  const [confirmToken, { loading: tokenLoading, data: tokenData }] =
-    useMutation<MutationResult>("/api/users/confirm");
+  const [enter, { loading, data, error }] = useMutation<MutationResult>("/api/users/enter");
+  const [confirmToken, { loading: tokenLoading, data: tokenData }] = useMutation<MutationResult>("/api/users/confirm");
   const { register, handleSubmit, reset } = useForm<EnterForm>();
-  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
-    useForm<TokenForm>();
+  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } = useForm<TokenForm>();
   const [method, setMethod] = useState<"email" | "phone">("email");
   const onEmailClick = () => {
     reset();
@@ -50,7 +47,8 @@ const Enter: NextPage = () => {
     if(tokenData?.ok){
       router.push("/")
     }
-  },[tokenData, router])
+  },[tokenData, router]) //token이 존재하면 home page로 새로고침
+
   return (
     <div className="mt-16 px-4">
       <h3 className="text-3xl font-bold text-center">Enter to Carrot</h3>

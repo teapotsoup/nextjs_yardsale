@@ -2,7 +2,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"] 
+  previewFeatures = ["referentialIntegrity"]
   //외래키 참조 무결성 설정
 }
 
@@ -35,19 +35,21 @@ model Token{
    createdAt DateTime @default(now())
    updatedAt DateTime @updatedAt
    userId Int
+  @@index([userId])
 }
 
 model Product{
      id Int @id @default(autoincrement())
    createdAt DateTime @default(now())
    updatedAt DateTime @updatedAt
-   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Cascade 부모 레코드 삭제시 자식 레코드도 삭제 시킨다.
    userId Int
    image String
    name String
    price Int
    description String @db.MediumText
    favs Fav[]
+  @@index([userId])
 }
 
 model Fav {
@@ -58,6 +60,8 @@ model Fav {
   productId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([productId])
 }
 
 model Post{
@@ -69,6 +73,7 @@ model Post{
      question String @db.MediumText
      answers Answer[]
      wonderings Wondering[]
+  @@index([userId])
 }
 
 model Answer{
@@ -80,6 +85,8 @@ model Answer{
      post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
      postId Int
      answer String @db.MediumText
+  @@index([userId])
+  @@index([postId])
 }
 
 model Wondering{
@@ -90,4 +97,6 @@ model Wondering{
      userId    Int
      post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
      postId Int
+  @@index([userId])
+  @@index([postId])
 }

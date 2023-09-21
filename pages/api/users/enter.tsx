@@ -2,6 +2,7 @@ import twilio from "twilio";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import type { NextApiRequest, NextApiResponse } from "next";
+import smtpTransport from "@libs/server/email";
 
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
@@ -34,31 +35,34 @@ async function handler(
     // console.log("if 진입");
     // const message = await twilioClient.messages.create({
     //   messagingServiceSid: process.env.TWILIO_MSID,
+    //   from:"+17745154449",
     //   to: process.env.MY_PHONE!,
     //   body: `로그인 토큰은 ${payload}입니다.`,
     // });
     // console.log(message);
   }
   else if (email) {
-    // console.log("메일 진입");
-    // const mailOptions = {
-    //   from: process.env.MAIL_ID,
-    //   to: email,
-    //   subject: "Nomad Carrot Authentication Email",
-    //   text: `Authentication Code : ${payload}`,
-    // };
-    // const result = await smtpTransport.sendMail(
-    //   mailOptions,
-    //   (error, responses) => {
-    //     if (error) {
-    //       console.log(error);
-    //       return null;
-    //     } else {
-    //       console.log(responses);
-    //       return null;
-    //     }
-    //   }
-    // );
+    console.log("메일 진입");
+    const mailOptions = {
+      from: process.env.MAIL_ID,
+      to: email,
+      subject: "Nomad Carrot Authentication Email",
+      text: `Authentication Code : ${payload}`,
+    };
+    const result = await smtpTransport.sendMail(
+      mailOptions,
+      (error, responses) => {
+        if (error) {
+          console.log(error);
+          return null;
+        } else {
+          console.log(responses);
+          return null;
+        }
+      }
+    );
+    smtpTransport.close();
+    return console.log(result);
   }
   return res.json({
     ok: true,
@@ -68,39 +72,5 @@ async function handler(
 export default withHandler({
   methods: ["POST"],
   handler,
-  isPrivate:false
+  isPrivate : false
 });
-
-// console.log("페이로드:",payload)
-// if (phone) {
-//   console.log("if 진입");
-//   const message = await twilioClient.messages.create({
-//     messagingServiceSid: process.env.TWILIO_MSID,
-//     to: process.env.MY_PHONE!,
-//     body: `로그인 토큰은 ${payload}입니다.`,
-//   });
-//   console.log(message);
-// }
-// if (email) {
-//   console.log("메일 진입");
-//   const mailOptions = {
-//     from: process.env.MAIL_ID,
-//     to: email,
-//     subject: "Nomad Carrot Authentication Email",
-//     text: `Authentication Code : ${payload}`,
-//   };
-//   const result = await smtpTransport.sendMail(
-//     mailOptions,
-//     (error, responses) => {
-//       if (error) {
-//         console.log(error);
-//         return null;
-//       } else {
-//         console.log(responses);
-//         return null;
-//       }
-//     }
-//   );
-//   smtpTransport.close();
-//   console.log("결과",result);
-// }
