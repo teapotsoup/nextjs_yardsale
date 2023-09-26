@@ -22,7 +22,7 @@ const Write: NextPage = () => {
   const {register, handleSubmit} = useForm<WriteForm>()
   const [post, {loading,data}] = useMutation<WriteResponse>("/api/posts")
   const onValid = (data:WriteForm)=>{
-    if(loading) return
+    if(loading) return // 로딩중일때 반복적으로 post하는 것을 막기 위함
     post(data)
   }
   useEffect(()=>{
@@ -34,7 +34,7 @@ const Write: NextPage = () => {
     <Layout canGoBack title="Write Post">
       <form onSubmit={handleSubmit(onValid)} className="p-4 space-y-4">
         <TextArea register={register("question",{required:true, minLength:5} )} required placeholder="Ask a question!" />
-        <Button text={loading? "Loading...":"Submit"} />
+        <Button text={loading ? "Loading...":"Submit"} />
       </form>
     </Layout>
   );

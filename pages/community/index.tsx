@@ -2,8 +2,24 @@ import type { NextPage } from "next";
 import Link from "next/link";
 import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
+import useSWR from "swr";
+import { Post,User  } from "@prisma/client";
+interface PostWithUser extends Post {
+  user: User;
+  _count: {
+    wondering: number;
+    answers: number;
+  };
+}
 
-const Community: NextPage = () => {
+interface PostsResponse {
+  posts: PostWithUser[];
+}
+
+
+const Community: NextPage<PostsResponse> = ({ posts }) => {
+  // const {data} = useSWR<PostsResponse>("/api/posts")
+  console.log(posts)
   return (
     <Layout hasTabBar title="동네생활">
       <div className="space-y-4 divide-y-[2px]">
