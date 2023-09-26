@@ -49,7 +49,7 @@ async function handler(
       subject: "Nomad Carrot Authentication Email",
       text: `Authentication Code : ${payload}`,
     };
-    const result = await smtpTransport.sendMail(
+    await smtpTransport.sendMail(
       mailOptions,
       (error, responses) => {
         if (error) {
@@ -62,7 +62,7 @@ async function handler(
       }
     );
     smtpTransport.close();
-    return console.log(result);
+    // console.log(result);
   }
   return res.json({
     ok: true,

@@ -27,16 +27,13 @@ async function handler(
             contains: word,
         }
     }))
-    // console.log(terms)
     const relatedProducts = await client.product.findMany({
-        where:{
-            OR:terms,
-            AND:{
-                id:{
-                    not:product?.id,
-                },
-            },
-        },
+        where: {
+            OR : terms,
+            NOT : {
+                id : product?.id
+            }
+        }
     });
     const isLiked = Boolean(
         await client.fav.findFirst({

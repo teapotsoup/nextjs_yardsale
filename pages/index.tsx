@@ -6,6 +6,7 @@ import Forms from "./forms";
 import useUser from "@libs/client/useUser";
 import useSWR from "swr";
 import { Product } from "@prisma/client";
+import Head from "next/head";
 
 interface CountWithProduct extends Product{
   _count:{favs:number}
@@ -21,6 +22,9 @@ const Home: NextPage = () => {
   const {data} = useSWR<ProductsResponse>("/api/products")
   return (
     <Layout hasTabBar title="홈">
+        <Head>
+            <title>Home</title>
+        </Head>
       <div className="space-y-1 divide-y-[2px]">
         {data?.products?.map((product) => (
           <Item

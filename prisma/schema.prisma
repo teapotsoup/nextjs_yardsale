@@ -2,14 +2,12 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
-  //외래키 참조 무결성 설정
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  relationMode = "prisma"
    //외래키 참조 무결성 설정
 }
 
@@ -39,7 +37,7 @@ model Token{
 }
 
 model Product{
-     id Int @id @default(autoincrement())
+   id Int @id @default(autoincrement())
    createdAt DateTime @default(now())
    updatedAt DateTime @updatedAt
    user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Cascade 부모 레코드 삭제시 자식 레코드도 삭제 시킨다.

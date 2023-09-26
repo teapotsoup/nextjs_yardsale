@@ -27,7 +27,6 @@ const Upload: NextPage = () => {
   const onValid = (data:UploadProductForm)=>{
     if(loading) return;
     else{
-      console.log(data)
       uploadProduct(data)
     }
   }

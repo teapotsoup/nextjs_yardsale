@@ -8,7 +8,6 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-  console.log(req.session)
   const { token } = req.body;
   const foundToken = await client.token.findUnique({
     where:{
