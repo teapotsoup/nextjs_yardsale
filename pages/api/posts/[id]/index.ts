@@ -59,7 +59,7 @@ const post = await client.post.findUnique({
   res.json({
     ok:true,
     post,
-      isWondering,
+    isWondering,
   })
 }
 

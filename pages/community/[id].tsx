@@ -48,7 +48,9 @@ const CommunityPostDetail: NextPage = () => {
             ...data.post,
             _count: {
               ...data.post._count,
-              wonderings:data?.post._count.wonderings+1
+              wonderings: data.isWondering
+              ? data?.post._count.wonderings - 1
+              : data?.post._count.wonderings + 1,
             },
           },
           isWondering: !data.isWondering,
@@ -57,8 +59,10 @@ const CommunityPostDetail: NextPage = () => {
     );
     wonder({});
   };
+
   // useEffect(() => {
-  //   if (data && !data.ok) {
+  //   console.log(data)
+  //   if (data?.post && !data.ok) {
   //     router.push("/community");
   //   }
   // }, [data, router]);

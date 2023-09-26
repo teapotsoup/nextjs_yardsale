@@ -19,7 +19,7 @@ interface PostsResponse {
 
 const Community: NextPage<PostsResponse> = ({ posts }) => {
   // const {data} = useSWR<PostsResponse>("/api/posts")
-  console.log(posts)
+  // console.log(posts)
   return (
     <Layout hasTabBar title="동네생활">
       <div className="space-y-4 divide-y-[2px]">

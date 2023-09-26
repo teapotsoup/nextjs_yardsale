@@ -48,7 +48,7 @@ async function handler(
     })
 }
 
-export default  withApiSession(withHandler({
+export default withApiSession(withHandler({
     methods: ["POST"],
     handler,
 }));
