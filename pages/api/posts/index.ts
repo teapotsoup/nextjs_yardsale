@@ -8,24 +8,29 @@ async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseType>
 ) {
-const {body:{question},session:{user}} =req;
-if(req.method === "POST"){
-  const post = await client.post.create({
-    data:{
-        question,
-        user:{
-            connect:{
-                id:user?.id,
-            }
-        }
-    }
-})
-  res.json({
-    ok:true,
-    post
-  })
-}
+      if(req.method === "POST"){
+        const {body:{question, latitude, longitude},session:{user}} =req;
+        const post = await client.post.create({
+          data:{
+              question,
+            latitude,
+            longitude,
+              user:{
+                  connect:{
+                      id:user?.id,
+                  }
+              }
+          }
+      })
+        res.json({
+          ok:true,
+          post
+        })
+      }
 if(req.method === "GET"){
+  const {query:{latitude, longitude}} =req;
+  const parsedLatitude = parseFloat(latitude!.toString());
+  const parsedLongitude = parseFloat(longitude!.toString());
   const posts = await client.post.findMany({
     include:{
       user:{
@@ -40,6 +45,16 @@ if(req.method === "GET"){
           wonderings:true,
           answers:true
         }
+      }
+    },
+    where:{
+      latitude:{
+        gte: parsedLatitude - 0.01, // 코드 챌린지 1 : 유저가 범위 정하게 만들기
+        lte: parsedLatitude + 0.01,
+      },
+      longitude:{
+        gte: parsedLongitude - 0.01,
+        lte: parsedLongitude + 0.01,
       }
     }
   })

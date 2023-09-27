@@ -7,6 +7,7 @@ import useMutation from "@libs/client/useMutation";
 import { useEffect } from "react";
 import { Post } from "@prisma/client";
 import { useRouter } from "next/router";
+import useCoords from "@libs/client/useCoords";
 
 type WriteForm ={
   question:string
@@ -18,12 +19,13 @@ type WriteResponse={
 }
 
 const Write: NextPage = () => {
+  const {latitude, longitude} = useCoords();
   const router = useRouter()
   const {register, handleSubmit} = useForm<WriteForm>()
   const [post, {loading,data}] = useMutation<WriteResponse>("/api/posts")
   const onValid = (data:WriteForm)=>{
     if(loading) return // 로딩중일때 반복적으로 post하는 것을 막기 위함
-    post(data)
+    post({...data, latitude, longitude})
   }
   useEffect(()=>{
     if(data && data.ok){
