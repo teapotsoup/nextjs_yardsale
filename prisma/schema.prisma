@@ -29,6 +29,7 @@ model User{
   receivedReviews Review[] @relation(name: "receivedReviews")
   sales           Sale[]
   Purchase        Purchase[]
+  record          Record[]
 }
 model Token{
    id Int @id @default(autoincrement())
@@ -53,19 +54,8 @@ model Product{
    favs Fav[]
   sales           Sale[]
   Purchase        Purchase[]
+  records     Record[]
   @@index([userId])
-}
-
-model Fav {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([userId])
-  @@index([productId])
 }
 
 model Post{
@@ -143,6 +133,37 @@ model Purchase {
   updatedAt DateTime @updatedAt
   @@index([userId])
   @@index([productId])
+}
+
+model Fav {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([productId])
+}
+
+model Record {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  kind      Kind
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@index([productId])
+}
+
+enum Kind {
+  Purchase
+  Sale
+  Fav
 }
 
 // 코드 챌린지 2 : Record로 대통합
