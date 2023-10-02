@@ -14,11 +14,14 @@ export default function useUser() {
     );
     const router = useRouter();
     useEffect(() => {
-        if (data && !data.ok) {
-            console.log('로그인 안돼서 로그인 창으로 연결')
-            console.log(data)
-            router.replace("/enter");
-        }
+      if (data && !data.ok) {
+        console.log('로그인 안돼서 로그인 창으로 연결')
+        router.replace("/enter");
+      }
+      console.log(router.pathname);
+      if (data && data.ok && router.pathname === "/enter") {
+        router.replace("/profile");
+      }
     }, [data, router]);
     return { user: data?.profile, isLoading: !data && !error };
 }
