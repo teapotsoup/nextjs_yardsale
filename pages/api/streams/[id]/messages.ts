@@ -26,13 +26,10 @@ async function handler(
             }
         }
     })
-
     res.json({
         ok: true,
         message
     });
-
-
 }
 
 export default withApiSession(

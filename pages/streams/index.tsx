@@ -4,6 +4,8 @@ import FloatingButton from "../../components/floating-button";
 import Layout from "../../components/layout";
 import useSWR from "swr";
 import {Stream} from "@prisma/client";
+import {useEffect, useState} from "react";
+import Pagination from "@components/Pagination";
 
 type StreamsResponse = {
     ok:boolean,
@@ -11,22 +13,33 @@ type StreamsResponse = {
 }
 
 const Streams: NextPage = () => {
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalCount, setTotalCount]= useState<Number>();
     const {data} = useSWR<StreamsResponse>(`/api/streams`)
-    console.log(data)
+    const { data: limitData } = useSWR<StreamsResponse>(`/api/streams?page=${currentPage}`);
+
+    useEffect(()=>{
+        setTotalCount(data?.streams?.length!)
+    },[data])
+
   return (
     <Layout canGoBack>
       <div className="py-10 divide-y-[1px] space-y-4">
-        {data?.streams.map((stream) => (
+        {limitData?.streams?.map((stream) => (
             <Link key={stream.id} href={`/streams/${stream.id}`}>
             <a className="pt-4 block  px-4">
               <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
-              <h1 className="text-2xl mt-2 font-bold text-gray-900">
-                  {stream.name}
-              </h1>
+                <h3 className='mt-2 text-lg  text-gray-700'>{stream.id}</h3>
             </a>
           </Link>
 
         ))}
+          <Pagination
+              totalCount={Number(totalCount)}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+          />
+
        <FloatingButton href="/streams/create">
           <svg
             className="w-6 h-6"
