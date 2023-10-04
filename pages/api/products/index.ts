@@ -30,7 +30,7 @@ async function handler(
     const product = await client.product.create({
       data: {
         name,
-        price: +price,
+        price,
         description,
         image: "xx",
         user: { connect: { id: user?.id } },
