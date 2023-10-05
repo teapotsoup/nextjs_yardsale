@@ -6,19 +6,17 @@ interface ProductListProps {
     kind: "Fav" | "Sale" | "Purchase";
   }
   
-  interface Record {
+interface Record {
     id: number;
     product: ProductWithCount;
-  }
+}
   
-  interface ProductListResponse {
+interface ProductListResponse {
     [key: string]: Record[];
-  }
+}
 
-  export default function ProductList({ kind }: ProductListProps) {
+export default function ProductList({ kind }: ProductListProps) {
     const { data } = useSWR<ProductListResponse>(`/api/users/me/records?kind=${kind}`);
-    console.log(kind)
-    console.log(data)
     return data ? (
       <>
         {data?.records.map((record) => (

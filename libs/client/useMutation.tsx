@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 
 type UseMutationState<T>={
   loading: boolean;
