@@ -27,8 +27,6 @@ const newAnswer = await client.answer.create({
       answer,
     }
 });
-// if(!post){}
-console.log(newAnswer)
   res.json({
     ok:true,
     answer : newAnswer,

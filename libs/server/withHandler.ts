@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import React from "react";
 
 type method = "GET"|"POST"|"DELETE"
 

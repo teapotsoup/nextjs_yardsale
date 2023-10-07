@@ -1,8 +1,10 @@
 import type { NextPage } from "next";
 import Layout from "@components/layout";
 import Link from "next/link";
+import useUser from "@libs/client/useUser";
 
 const Chats: NextPage = () => {
+  const {user,isLoading} = useUser();
   return (
     <Layout canGoBack >
     <div className="py-10 divide-y-[1px] ">

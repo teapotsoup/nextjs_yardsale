@@ -12,7 +12,7 @@ async function handler(
         session: { user },
         query: { kind },
     } = req;
-    const records = await client.record.findMany({ // /api/users/me/records?kind=Fav , Sale , Purchase
+    const records = await client.record.findMany({ // 브라우저 엔드포인트 /api/users/me/records?kind=[Fav || Sale || Purchase]
         where: {
           userId: user?.id,
           kind: kind as Kind,

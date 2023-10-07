@@ -10,8 +10,7 @@ async function handler(
     const {
         session: { user },
     } = req;
-    console.log(user)
-    // console.log(client.review)
+
     const reviews = await client.review.findMany({
         where: {
             createdForId: user?.id,

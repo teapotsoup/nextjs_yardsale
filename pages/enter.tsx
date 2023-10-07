@@ -34,19 +34,24 @@ const Enter: NextPage = () => {
     reset();
     setMethod("phone");
   };
-  const onValid = (validForm: EnterForm) => {
+  const onValid = async (validForm: EnterForm) => {
+    console.log('onValid 접근 후 로딩 상태 ', loading)
     if (loading) return;
-    enter(validForm);
+    await enter(validForm);
   };
-  const onTokenValid = (validForm: TokenForm) => {
+  const onTokenValid = async (validForm: TokenForm) => {
     if (tokenLoading) return;
-    confirmToken(validForm);
+    await confirmToken(validForm);
   };
   const router = useRouter()
+
   useEffect(()=>{
-    if(tokenData?.ok){
-      router.push("/")
-    }
+    (async () => {
+      console.log("enter 창의 토큰 데이터 : ", tokenData)
+      if(tokenData?.ok){
+        router.push("/")
+      }
+    })();
   },[tokenData, router]) //token이 존재하면 home page로 새로고침
 
   return (
