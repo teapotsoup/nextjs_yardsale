@@ -40,7 +40,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                             id={product.id}
                             title={product.name}
                             price={product.price}
-                            hearts={product.price.length}
+                            hearts={product.favs.length}
                         />
                     )))
                     :<div>판매하는 상품이 없습니다</div>}

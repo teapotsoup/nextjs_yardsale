@@ -30,7 +30,7 @@ interface ChatroomResponse {
 }
 
 const ItemDetail: NextPage = () => {
-  const {user} = useUser()
+  const {user : sessionUser} = useUser()
   const router = useRouter();
   const { data,mutate:boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
@@ -55,7 +55,6 @@ const ItemDetail: NextPage = () => {
     }
   }
   useEffect(() => {
-    console.log('!')
     if (chatroomData && chatroomData.ok) {
       router.push(`/chats/${chatroomData.chatroomId}`);
     }
@@ -72,8 +71,7 @@ const ItemDetail: NextPage = () => {
                 <p className="text-sm font-medium text-gray-500">
                   {data?.product?.user?.name}
                 </p>
-
-                <Link href={`/profile/${data?.product?.user?.id}`}>
+                <Link href={sessionUser?.id === data?.product?.user?.id ? `/profile`  : `/profile/${data?.product?.user?.id}`}>
                   <a className="text-xs font font-medium text-gray-500">
                     View profile &rarr;
                   </a>
@@ -90,7 +88,8 @@ const ItemDetail: NextPage = () => {
               <p className="text-base my-6 text-gray-700">
                 {data?.product?.description}
               </p>
-              <div className="flex items-center justify-between space-x-3">
+
+              {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
                 <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
                     onClick={onFavClick}
@@ -102,11 +101,18 @@ const ItemDetail: NextPage = () => {
                     }
                 >
                   {data?.isLiked ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                      <svg 
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6" 
+                      viewBox="0 0 24 24" 
+                      fill="currentColor">
+                        <path 
+                        fillRule="evenodd" 
+                        d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" 
+                        clipRule="evenodd" />
                       </svg>
                   ) :(<svg
-                      className="h-6 w-6 "
+                      className="h-6 w-6"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -121,7 +127,8 @@ const ItemDetail: NextPage = () => {
                     />
                   </svg>)}
                 </button>
-              </div>
+              </div>)}
+              
             </div></> ):(<Image src={Spinner}/>) }
         </div>
         <div>
