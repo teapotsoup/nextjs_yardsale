@@ -22,7 +22,8 @@ type MutationResult = {
 };
 
 const Enter: NextPage = () => {
-  const {user} = useUser()
+  // 무한 랜더링
+  // const {user} = useUser()
   const [enter, { loading, data, error }] = useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] = useMutation<MutationResult>("/api/users/confirm");
   const { register, handleSubmit, reset } = useForm<EnterForm>();

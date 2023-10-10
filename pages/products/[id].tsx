@@ -73,7 +73,7 @@ const ItemDetail: NextPage = () => {
                   {data?.product?.user?.name}
                 </p>
 
-                <Link href={`/users/profiles/${data?.product?.user?.id}`}>
+                <Link href={`/profile/${data?.product?.user?.id}`}>
                   <a className="text-xs font font-medium text-gray-500">
                     View profile &rarr;
                   </a>
