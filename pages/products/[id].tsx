@@ -11,31 +11,55 @@ import { cls } from "@libs/client/utils";
 import useUser from "@libs/client/useUser";
 import Spinner from '../../public/Spinner.gif';
 import Image from "next/image";
+import {useEffect} from "react";
 
 interface ProductWithUser extends Product {
   user: User;
 }
 
-type ItemDetailResponse = {
+interface ItemDetailResponse  {
   ok: boolean;
   product: ProductWithUser;
   relatedProducts: Product[];
   isLiked:boolean
 };
 
+interface ChatroomResponse {
+  ok: boolean;
+  chatroomId: String;
+}
+
 const ItemDetail: NextPage = () => {
-  const {user,isLoading} = useUser()
+  const {user} = useUser()
   const router = useRouter();
-  const {mutate} = useSWRConfig()
   const { data,mutate:boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   ); // 라우터가 마운트 중일때 undefined가 뜨는 것을 방지
   const [toggleFav] = useMutation(`/api/products/${router.query.id}/fav`);
+  const [createChatRoom, { data: chatroomData, loading }] =
+      useMutation<ChatroomResponse>(
+          `/api/chats?productId=${data?.product?.id}&sellerId=${data?.product?.userId}`
+      );
   const onFavClick = () => {
     if(!data) return;
     boundMutate(prev=>prev && {...prev, isLiked:!prev.isLiked},false) // 비구조화 할당으로 data의 isLiked 값 상태 변경.
     toggleFav({});
   };
+  const onTalkToSellerClick = ()=> {
+    if (!data) return;
+    if (window.confirm("판매자와 대화 하시겠습니까?")) {
+      if(loading) return ;
+      createChatRoom({})
+    } else {
+      alert("취소");
+    }
+  }
+  useEffect(() => {
+    console.log('!')
+    if (chatroomData && chatroomData.ok) {
+      router.push(`/chats/${chatroomData.chatroomId}`);
+    }
+  }, [chatroomData, router]);
 
   return (
     <Layout canGoBack>
@@ -58,16 +82,16 @@ const ItemDetail: NextPage = () => {
             </div>
             <div className="mt-5">
               <h1 className="text-3xl font-bold text-gray-800">
-                {data?.product.name}
+                {data?.product?.name}
               </h1>
               <p className="text-3xl block mt-3 text-gray-900">
-                ${data?.product.price}
+                ${data?.product?.price}
               </p>
               <p className="text-base my-6 text-gray-700">
-                {data?.product.description}
+                {data?.product?.description}
               </p>
               <div className="flex items-center justify-between space-x-3">
-                <Button large text="Talk to seller" />
+                <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
                     onClick={onFavClick}
                     className={

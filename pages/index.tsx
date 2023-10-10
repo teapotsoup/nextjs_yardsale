@@ -24,7 +24,7 @@ const {user,isLoading} = useUser();
         <Head>
             <title>Home</title>
         </Head>
-      <div className="space-y-1 divide-y-[2px]">
+      <div className="space-y-5 divide-y-[2px]">
         {data?.products?.map((product) => (
           <Item
           key={product.id}

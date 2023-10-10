@@ -5,13 +5,14 @@ import { useRouter } from "next/router";
 
 interface LayoutProps {
   title?: string;
+  productName? :string;
   canGoBack?: boolean;
   hasTabBar?: boolean;
   children: React.ReactNode;
 }
 
 export default function Layout({
-  title,
+  title,productName,
   canGoBack,
   hasTabBar,
   children,
@@ -22,7 +23,7 @@ export default function Layout({
   };
   return (
     <div>
-      <div className="bg-white w-full h-12 max-w-2xl justify-center text-lg px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
+      <div className="bg-white w-full h-12 max-w-2xl justify-center text-lg py-8 px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
         {canGoBack ? (
           <button onClick={onClick} className="absolute left-4">
             <svg
@@ -41,9 +42,14 @@ export default function Layout({
             </svg>
           </button>
         ) : null}
-       {title ? (
-          <span className={cls(canGoBack ? "mx-auto" : "", "")}>{title}</span>
-        ) : null}
+    <div className = "grid justify-items-center">
+      {title ? (
+            <div className={cls(canGoBack ? "mx-auto text-md" : "", "")}>{title}</div>
+      ) : null}
+      {productName ? (
+            <div className={cls(canGoBack ? "mx-auto text-xs" : "", "")}>{productName}</div>
+      ) : null}
+    </div>
       </div>
       <div className={cls("pt-16", hasTabBar ? "pb-24" : "")}>{children}</div>
       {hasTabBar ? (

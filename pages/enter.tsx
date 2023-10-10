@@ -6,6 +6,7 @@ import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
+import useUser from "@libs/client/useUser";
 
 type EnterForm = {
   email?: string;
@@ -21,6 +22,7 @@ type MutationResult = {
 };
 
 const Enter: NextPage = () => {
+  const {user} = useUser()
   const [enter, { loading, data, error }] = useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] = useMutation<MutationResult>("/api/users/confirm");
   const { register, handleSubmit, reset } = useForm<EnterForm>();

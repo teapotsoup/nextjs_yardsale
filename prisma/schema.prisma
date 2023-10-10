@@ -32,6 +32,9 @@ model User{
   record          Record[]
   streams         Stream[]
   messages        Message[]
+  buyerChat       Chatroom[]    @relation(name: "buyer")
+  sellerChat      Chatroom[]    @relation(name: "seller")
+  chatMessages    ChatMessage[]
 }
 
 
@@ -59,6 +62,7 @@ model Product{
   sales      Sale[]
   Purchase   Purchase[]
   records    Record[]
+  chatrooms   Chatroom[]
   @@index([userId])
 }
 
@@ -195,4 +199,36 @@ model Message {
 
   @@index([userId])
   @@index([streamId])
+}
+
+
+model Chatroom {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  product      Product       @relation(fields: [productId], references: [id])
+  productId    Int
+  buyer        User          @relation(name: "buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  buyerId      Int
+  seller       User          @relation(name: "seller", fields: [sellerId], references: [id], onDelete: Cascade)
+  sellerId     Int
+  chatMessages ChatMessage[]
+
+  @@index([productId])
+  @@index([buyerId])
+  @@index([sellerId])
+}
+
+model ChatMessage {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  message    String   @db.MediumText
+  chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+  chatroomId Int
+
+  @@index([userId])
+  @@index([chatroomId])
 }
