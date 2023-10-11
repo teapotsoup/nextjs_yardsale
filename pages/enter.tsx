@@ -26,7 +26,7 @@ const Enter: NextPage = () => {
   // const {user} = useUser()
   const [enter, { loading, data, error }] = useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] = useMutation<MutationResult>("/api/users/confirm");
-  const { register, handleSubmit, reset } = useForm<EnterForm>();
+  const { register, handleSubmit, reset,formState: { errors } } = useForm<EnterForm>();
   const { register: tokenRegister, handleSubmit: tokenHandleSubmit } = useForm<TokenForm>();
   const [method, setMethod] = useState<"email" | "phone">("email");
   const onEmailClick = () => {
@@ -37,26 +37,27 @@ const Enter: NextPage = () => {
     reset();
     setMethod("phone");
   };
-  const onValid = async (validForm: EnterForm) => {
-    console.log('onValid 접근 후 로딩 상태 ', loading)
+  const onValid =  (validForm: EnterForm) => {
+    // console.log('onValid 접근 후 로딩 상태 ', loading)
     if (loading) return;
-    await enter(validForm);
+    enter(validForm);
   };
-  const onTokenValid = async (validForm: TokenForm) => {
+  const onTokenValid =  (validForm: TokenForm) => {
     if (tokenLoading) return;
-    await confirmToken(validForm);
+     confirmToken(validForm);
   };
   const router = useRouter()
 
   useEffect(()=>{
-    (async () => {
+    // (async () => {
+    console.log('엔터창 랜더링')
       console.log("enter 창의 토큰 데이터 : ", tokenData)
       if(tokenData?.ok){
         router.push("/")
       }
-    })();
+    // })();
   },[tokenData, router]) //token이 존재하면 home page로 새로고침
-
+  // , tokenLoading,loading,tokenHandleSubmit
   return (
     <div className="mt-16 px-4">
       <h3 className="text-3xl font-bold text-center">Enter to Carrot</h3>
@@ -116,6 +117,9 @@ const Enter: NextPage = () => {
                 <Input
                   register={register("email", {
                     required: true,
+                    pattern:{
+                      value:/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+                      message:"이메일 형식이 아닙니다."}
                   })}
                   name="email"
                   label="Email address"
@@ -123,6 +127,7 @@ const Enter: NextPage = () => {
                   required
                 />
               ) : null}
+              {errors.email?.message}
               {method === "phone" ? (
                 <Input
                   register={register("phone")}

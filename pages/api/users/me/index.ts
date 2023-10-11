@@ -8,9 +8,11 @@ async function handler(
   res: NextApiResponse<ResponseType>
 ) {
   if(req.method === "GET"){
+    // console.log(req.session.user)
     const profile = await client.user.findUnique({
       where:{id:req.session.user?.id}
     })
+    // console.log(profile)
     res.json({
       ok:true,
       profile

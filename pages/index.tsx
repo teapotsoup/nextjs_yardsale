@@ -17,7 +17,7 @@ type ProductsResponse={
 }
 
 const Home: NextPage = () => {
-const {user,isLoading} = useUser();
+const {user} = useUser();
   const {data} = useSWR<ProductsResponse>("/api/products")
   return (
     <Layout hasTabBar title="홈">

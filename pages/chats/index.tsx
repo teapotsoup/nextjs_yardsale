@@ -3,13 +3,13 @@ import Layout from "@components/layout";
 import Link from "next/link";
 import useUser from "@libs/client/useUser";
 import useSWR from "swr";
-import {User,Product, Chatroom, Chatmessage} from "@prisma/client";
+import {User,Product, Chatroom, ChatMessage} from "@prisma/client";
 
 interface ChatroomWithUsers extends Chatroom {
   buyer: User;
   seller: User;
   product : Product;
-  chatMessages: Chatmessage[];
+  chatMessages: ChatMessage[];
 }
 
 

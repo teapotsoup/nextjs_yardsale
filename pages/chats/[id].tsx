@@ -3,12 +3,12 @@ import Layout from "@components/layout";
 import Message from "@components/message";
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import {Chatmessage, Chatroom, User, Product } from '@prisma/client';
+import {ChatMessage, Chatroom, User, Product } from '@prisma/client';
 import useUser from '@libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import useMutation from '@libs/client/useMutation';
 
-interface ChatMessageWithUser extends Chatmessage {
+interface ChatMessageWithUser extends ChatMessage {
   user: User;
 }
 

@@ -22,7 +22,7 @@ const Profile: NextPage<ProfileResponse> = () => {
     const {user} = useUser();
     const router = useRouter();
     const {data,mutate} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
-    console.log(data)
+    // console.log(data)
     return (
         <Layout canGoBack>
             <div className="py-10 px-4">

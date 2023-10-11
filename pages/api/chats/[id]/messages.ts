@@ -12,7 +12,7 @@ async function handler(
         body,
         session: { user },
     } = req;
-    const message = await client?.chatmessage.create({
+    const message = await client?.chatMessage.create({
         data: {
             message: body.message,
             chatroom: {

@@ -4,13 +4,10 @@ import { SWRConfig } from "swr";
 import {useRouter} from "next/router";
 import useUser from "@libs/client/useUser";
 
-
-
-
-
 function MyApp({ Component, pageProps }: AppProps) {
-  const { pathname } = useRouter();
-  useUser(pathname);
+  // const { pathname } = useRouter();
+  //
+  // useUser(pathname);
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -18,6 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       value={{
          fetcher: (url: string) => fetch(url).then((response) => response.json()), }}
     >
+
         <Component {...pageProps} />
     </SWRConfig>
     </div>
