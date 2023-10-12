@@ -2,6 +2,7 @@ import React from "react";
 import { cls } from "@libs/client/utils";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 interface LayoutProps {
   title?: string;
@@ -9,6 +10,7 @@ interface LayoutProps {
   canGoBack?: boolean;
   hasTabBar?: boolean;
   children: React.ReactNode;
+  seoTitle?:string;
 }
 
 export default function Layout({
@@ -16,6 +18,7 @@ export default function Layout({
   canGoBack,
   hasTabBar,
   children,
+  seoTitle,
 }: LayoutProps) {
   const router = useRouter();
   const onClick = () => {
@@ -23,6 +26,9 @@ export default function Layout({
   };
   return (
     <div>
+      <Head>
+        <title>{seoTitle} | Yard Sale</title>
+      </Head>
       <div className="bg-white w-full h-12 max-w-2xl justify-center text-lg py-8 px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
         {canGoBack ? (
           <button onClick={onClick} className="absolute left-4">

@@ -1,12 +1,25 @@
 import type { NextPage } from "next";
-import { useEffect, useState } from "react";
+import {Suspense, useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import Button from "@components/button";
 import Input from "@components/input";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
-import useUser from "@libs/client/useUser";
+import dynamic from "next/dynamic";
+//
+
+const Bs = dynamic(
+  // @ts-ignore
+    () =>
+        new Promise((resolve) =>
+            setTimeout(() => resolve(import("@components/bs")), 10000)
+        ),
+    { ssr: false, suspense: true, loading: () => <span>loading</span> }
+);
+// 리액트는 임포트시 화면에 컴포넌트가 보이지 않더라도 다 자바스크립트로 다운로드함
+// 이는 불필요한 속도 저하가 발생할수 있음
+// 다이나믹 임포트는 화면에 컴포넌트가 보일때 다운로드함 
 
 type EnterForm = {
   email?: string;
@@ -39,7 +52,7 @@ const Enter: NextPage = () => {
   };
   const onValid =  (validForm: EnterForm) => {
     // console.log('onValid 접근 후 로딩 상태 ', loading)
-    if (loading) return;
+    if (loading) return;``
     enter(validForm);
   };
   const onTokenValid =  (validForm: TokenForm) => {
@@ -50,8 +63,8 @@ const Enter: NextPage = () => {
 
   useEffect(()=>{
     // (async () => {
-    console.log('엔터창 랜더링')
-      console.log("enter 창의 토큰 데이터 : ", tokenData)
+    // console.log('엔터창 랜더링')
+    //   console.log("enter 창의 토큰 데이터 : ", tokenData)
       if(tokenData?.ok){
         router.push("/")
       }
@@ -60,7 +73,7 @@ const Enter: NextPage = () => {
   // , tokenLoading,loading,tokenHandleSubmit
   return (
     <div className="mt-16 px-4">
-      <h3 className="text-3xl font-bold text-center">Enter to Carrot</h3>
+      <h3 className="text-3xl font-bold text-center">Welcome to Yard Sale</h3>
       <div className="mt-12">
         {data?.ok ? (
           <form
@@ -129,14 +142,19 @@ const Enter: NextPage = () => {
               ) : null}
               {errors.email?.message}
               {method === "phone" ? (
-                <Input
-                  register={register("phone")}
-                  name="phone"
-                  label="Phone number"
-                  type="number"
-                  kind="phone"
-                  required
-                />
+                  <>
+                    <Suspense fallback={<button>loading!!</button>}>
+                      <Bs />
+                    </Suspense>
+                    <Input
+                        register={register("phone")}
+                        name="phone"
+                        label="Phone number"
+                        type="number"
+                        kind="phone"
+                        required
+                    />
+                  </>
               ) : null}
               {method === "email" ? (
                 <Button text={loading ? "Loading" : "Get login link"} />

@@ -11,13 +11,13 @@ async function handler(
     const {
       session: { user },
     } = req;
-    console.log(user)
+    // console.log(user)
     const profile = await client.user.findUnique({
       where: {
         id: user?.id,
       },
     });
-    console.log(profile)
+    // console.log(profile)
     if (!profile) return res.json({ ok: false });
     res.json({
       ok: true,

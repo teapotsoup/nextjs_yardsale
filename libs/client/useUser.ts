@@ -9,11 +9,11 @@ interface ProfileResponse {
 }
 
 export default function useUser(pathname?: string) {
+    const { data, error } = useSWR<ProfileResponse>("/api/users/me");
     const router = useRouter();
 
-    const { data, error } = useSWR<ProfileResponse>("/api/users/me");
     useEffect(() => {
-        console.log(data)
+        // console.log(data)
       if (data && !data.ok) {
         console.log('로그인 안돼서 로그인 창으로 연결')
         router.replace("/enter");

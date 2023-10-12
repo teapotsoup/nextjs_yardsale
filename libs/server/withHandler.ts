@@ -22,8 +22,8 @@ export default function withHandler(
     // console.log("알이큐 : ",req)
     // console.log("알이큐 세션 : ",req.session)
 
-    console.log("알이큐 세션 : ",req.session) // ip 호스트 기준 -> {}
-    console.log("isPrivate : ",isPrivate) // ip 호스트 기준 -> true
+    // console.log("알이큐 세션 : ",req.session) // ip 호스트 기준 -> {}
+    // console.log("isPrivate : ",isPrivate) // ip 호스트 기준 -> true
 
     // 로컬 호스트 기준 토큰 입력 전
     // 알이큐 세션 :  undefined
