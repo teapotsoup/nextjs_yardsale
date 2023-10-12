@@ -6,6 +6,7 @@ import useSWR, { SWRConfig } from "swr";
 import { Product } from "@prisma/client";
 import Head from "next/head";
 import useUser from "@libs/client/useUser";
+import client from "@libs/server/client";
 
 export interface ProductWithCount extends Product{
   _count:{favs:number}
@@ -15,7 +16,8 @@ type ProductsResponse={
   ok:boolean;
   products:ProductWithCount[]
 }
-
+// Next Js의 모든 페이지는 정적 페이지이다
+// 만든 페이지를 가져가서 일반 html로 만들기 때문이다.
 const Home: NextPage = () => {
 const {user} = useUser();
   const {data} = useSWR<ProductsResponse>("/api/products")
