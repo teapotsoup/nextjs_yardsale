@@ -25,7 +25,7 @@ const Profile: NextPage= () => {
   const {data} = useSWR<ReviewsResponse>('/api/reviews');
 
   return (
-    <Layout canGoBack seoTitle={'P0rofile'}>
+    <Layout canGoBack seoTitle={'Profile'}>
 <div className="py-10 px-4">
       <div className="flex items-center space-x-3">
         <div className="w-16 h-16 bg-slate-500 rounded-full" />

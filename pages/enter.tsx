@@ -64,7 +64,7 @@ const Enter: NextPage = () => {
   useEffect(()=>{
     // (async () => {
     // console.log('엔터창 랜더링')
-    //   console.log("enter 창의 토큰 데이터 : ", tokenData)
+      console.log("enter 창의 토큰 데이터 : ", tokenData)
       if(tokenData?.ok){
         router.push("/")
       }

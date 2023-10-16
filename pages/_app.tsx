@@ -7,10 +7,10 @@ import useUser from "@libs/client/useUser";
 import Script from "next/script";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  // const { pathname } = useRouter();
-  //
-  // useUser(pathname);
-    console.log("APP IS RUNNING");
+  const { pathname } = useRouter();
+
+  useUser(pathname);
+  //   console.log("APP IS RUNNING");
 
   return (
     <div className="w-full max-w-2xl mx-auto">

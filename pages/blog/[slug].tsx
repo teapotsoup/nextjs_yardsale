@@ -18,13 +18,13 @@ const Post: NextPage<{ post: string; data: any }> = ({ post, data }) => {
 };
 
 export function getStaticPaths() { // 데이터를 미리 생성하는 페이지를 만들기 위함
-    const files = readdirSync("./posts").map((file) => {
-        const [name, extension] = file.split(".");
-        return { params: { slug: name } };
-    });
+    // const files = readdirSync("./posts").map((file) => {
+    //     const [name, extension] = file.split(".");
+    //     return { params: { slug: name } };
+    // });
     return {
-        paths: files,
-        fallback: false,
+        paths: [],
+        fallback: "blocking", // HTML 파일이 없을때 유저가 페이지를 보는 것이 블락된다.
     };
 }
 

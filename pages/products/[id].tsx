@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type {GetStaticPaths, GetStaticProps, NextPage} from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
@@ -12,6 +12,7 @@ import useUser from "@libs/client/useUser";
 import Spinner from '../../public/Spinner.gif';
 import Image from "next/image";
 import {useEffect} from "react";
+import client from "@libs/server/client";
 
 interface ProductWithUser extends Product {
   user: User;
@@ -29,7 +30,7 @@ interface ChatroomResponse {
   chatroomId: String;
 }
 
-const ItemDetail: NextPage = () => {
+const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLiked}) => {
   const {user : sessionUser} = useUser()
   const router = useRouter();
   const { data,mutate:boundMutate } = useSWR<ItemDetailResponse>(
@@ -60,18 +61,28 @@ const ItemDetail: NextPage = () => {
     }
   }, [chatroomData, router]);
 
+  if(router.isFallback){
+    return (
+        <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
+          <Image src={Spinner}/>
+        </Layout>
+    )
+  }
+
   return (
     <Layout canGoBack seoTitle="Product Detail">
       <div className="px-4  py-4">
         <div className="mb-8">
-          {data ?  ( <><div className="h-96 bg-slate-300" />
+          {/*{data ?  (*/}
+
+              <><div className="h-96 bg-slate-300" />
             <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-slate-300" />
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  {data?.product?.user?.name}
+                  {product?.user?.name}
                 </p>
-                <Link href={sessionUser?.id === data?.product?.user?.id ? `/profile`  : `/profile/${data?.product?.user?.id}`}>
+                <Link href={sessionUser?.id === product?.user?.id ? `/profile`  : `/profile/${product?.user?.id}`}>
                   <a className="text-xs font font-medium text-gray-500">
                     View profile &rarr;
                   </a>
@@ -80,27 +91,27 @@ const ItemDetail: NextPage = () => {
             </div>
             <div className="mt-5">
               <h1 className="text-3xl font-bold text-gray-800">
-                {data?.product?.name}
+                {product?.name}
               </h1>
               <p className="text-3xl block mt-3 text-gray-900">
-                ${data?.product?.price}
+                ${product?.price}
               </p>
               <p className="text-base my-6 text-gray-700">
-                {data?.product?.description}
+                {product?.description}
               </p>
 
-              {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
+              {sessionUser?.id === product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
                 <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
                     onClick={onFavClick}
                     className={
                       cls(
                           "p-3 rounded-md flex items-center  hover:bg-gray-100 justify-center",
-                          data?.isLiked ? "hover:text-red-500 text-red-400":" hover:text-gray-500 text-gray-400"
+                          isLiked ? "hover:text-red-500 text-red-400":" hover:text-gray-500 text-gray-400"
                       )
                     }
                 >
-                  {data?.isLiked ? (
+                  {isLiked ? (
                       <svg 
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-6 w-6" 
@@ -129,13 +140,15 @@ const ItemDetail: NextPage = () => {
                 </button>
               </div>)}
               
-            </div></> ):(<Image src={Spinner}/>) }
+            </div></>
+
+          {/*):(<Image src={Spinner}/>) }*/}
         </div>
         <div>
           {data ?  (<>
             <h2 className="text-2xl font-bold text-gray-800">Similar items</h2>
             <div className=" mt-6 grid grid-cols-2 gap-4">
-              {data?.relatedProducts.map((product) => (
+              {relatedProducts.map((product) => (
                   <div key={product.id}>
                     <div className="h-56 w-full mb-4 bg-slate-300" />
                     <div className="text-center">
@@ -154,6 +167,60 @@ const ItemDetail: NextPage = () => {
       </div>
     </Layout>
   );
+};
+
+export const getStaticPaths : GetStaticPaths = ()=>{
+  return{
+    paths:[],
+    fallback:true
+        // "blocking"
+  }
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  if (!ctx?.params?.id) {
+    return {
+      props: {},
+    };
+  }
+  const product = await client.product.findUnique({
+    where: {
+      id: +ctx.params.id.toString(),
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+        },
+      },
+    },
+  });
+  const terms = product?.name.split(" ").map((word) => ({
+    name: {
+      contains: word,
+    },
+  }));
+  const relatedProducts = await client.product.findMany({
+    where: {
+      OR: terms,
+      AND: {
+        id: {
+          not: product?.id,
+        },
+      },
+    },
+  });
+  const isLiked = false;
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+  return {
+    props: {
+      product: JSON.parse(JSON.stringify(product)),
+      relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
+      isLiked,
+    },
+  };
 };
 
 export default ItemDetail;

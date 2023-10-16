@@ -77,6 +77,11 @@ const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
     );
 };
 
+// 서버에서 데이터를 불러온다.
+// NextJS에서는 넘겨받은 데이터를 html에 넣어서 유저에게 보내준다.
+// api에서 데이터를 불러올 필요가 없다.
+// 장점 : 유저가 로딩 화면을 볼일이 없다
+// 단점 : 모든 정보를 다 불러올때 까지 다른 화면의 구성을 볼수 없다
 export async function getServerSideProps(){
     console.log("SSR");
     const products = await client?.product.findMany({});
