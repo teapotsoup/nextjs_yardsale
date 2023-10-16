@@ -56,7 +56,7 @@ export default function withHandler(
       return res.status(401).json({ok:false, error: "plz log in"})  
     }
     try{
-      console.log("핸들러함수 진입")
+      // console.log("핸들러함수 진입")
       await handler(req,res)
     }catch(error){
       console.log(error);

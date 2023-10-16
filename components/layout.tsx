@@ -14,7 +14,7 @@ interface LayoutProps {
 }
 
 export default function Layout({
-  title,productName,
+  title, productName,
   canGoBack,
   hasTabBar,
   children,
@@ -24,10 +24,12 @@ export default function Layout({
   const onClick = () => {
     router.back();
   };
+
+  const headTitle = `${seoTitle} | Yard Sale`
   return (
     <div>
       <Head>
-        <title>{seoTitle} | Yard Sale</title>
+        <title>{headTitle}</title>
       </Head>
       <div className="bg-white w-full h-12 max-w-2xl justify-center text-lg py-8 px-10 font-medium  fixed text-gray-800 border-b top-0  flex items-center">
         {canGoBack ? (

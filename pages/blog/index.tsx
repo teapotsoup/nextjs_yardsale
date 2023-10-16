@@ -12,7 +12,7 @@ interface Post {
 }
 const Index : NextPage<{ posts: Post[] }> = ({posts}) => {
     return (
-        <Layout title="Index" seoTitle="Index">
+        <Layout title="Index" seoTitle="post">
             <h1 className="font-semibold text-center text-xl mt-5 mb-10">Latest Posts:</h1>
             {posts.map((post, index) => (
                 <div key={index} className="mb-5">

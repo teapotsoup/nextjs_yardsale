@@ -7,7 +7,7 @@ import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
-//
+import Skeleton from 'react-loading-skeleton'
 
 const Bs = dynamic(
   // @ts-ignore
@@ -143,7 +143,7 @@ const Enter: NextPage = () => {
               {errors.email?.message}
               {method === "phone" ? (
                   <>
-                    <Suspense fallback={<button>loading!!</button>}>
+                    <Suspense fallback={< Skeleton />}>
                       <Bs />
                     </Suspense>
                     <Input
