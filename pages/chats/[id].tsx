@@ -68,7 +68,7 @@ const ChatDetail: NextPage = () => {
   };
 
   return (
-    <Layout canGoBack title={user?.id === data?.chatroom?.buyer?.id ?  data?.chatroom?.seller?.name : data?.chatroom?.buyer?.name} productName={data?.chatroom?.product?.name}>
+    <Layout hasTabBar canGoBack title={user?.id === data?.chatroom?.buyer?.id ?  data?.chatroom?.seller?.name : data?.chatroom?.buyer?.name} productName={data?.chatroom?.product?.name}>
       <div className="py-10 pb-16 px-4 space-y-4">
         {data?.chatroom?.chatMessages.map((message) => (
             <Message

@@ -171,7 +171,7 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLik
 
 export const getStaticPaths : GetStaticPaths = ()=>{
   return{
-    paths:[],
+    paths:[], // 빌드 시 패스를 안 만들 경우 빈 배열로 둠
     fallback:true
         // "blocking"
   }
@@ -213,7 +213,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     },
   });
   const isLiked = false;
-  // await new Promise((resolve) => setTimeout(resolve, 10000));
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),

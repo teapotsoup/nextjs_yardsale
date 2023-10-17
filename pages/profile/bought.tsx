@@ -5,7 +5,7 @@ import ProductList from "@components/product-list";
 
 const Bought: NextPage = () => {
   return (
-    <Layout title="구매내역" canGoBack>
+    <Layout hasTabBar title="구매내역" canGoBack>
       <ProductList kind="Purchase" />
     </Layout>
   );

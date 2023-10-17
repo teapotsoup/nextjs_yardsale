@@ -10,9 +10,9 @@ interface Post {
     category: string;
     slug: string;
 }
-const Index : NextPage<{ posts: Post[] }> = ({posts}) => {
+const Blog : NextPage<{ posts: Post[] }> = ({posts}) => {
     return (
-        <Layout title="Index" seoTitle="post">
+        <Layout hasTabBar title="Blog" seoTitle="Blog">
             <h1 className="font-semibold text-center text-xl mt-5 mb-10">Latest Posts:</h1>
             {posts.map((post, index) => (
                 <div key={index} className="mb-5">
@@ -38,6 +38,10 @@ export async function getStaticProps() { // 페이지에서 html로 바꿔주기
         const [slug, _] = file.split(".");
         return { ...matter(content).data, slug };
     });
+    // console.log(blogPosts)
+    // [{title: 'Welcome Everyone',date: '2022.02.02',category: 'thougths',slug: '01-first-post'}
+    // ,{title: 'Meanwhile in fukuoka',date: '2022.02.02',category: 'travel',slug: '02-my-trip-to-fukuoka'}
+    // ,{title: 'Working in my company',date: '2022.10.16',category: 'work',slug: '04-working-in-mycompany'}]
     return {
         props: {
             posts:blogPosts.reverse(),
@@ -45,4 +49,4 @@ export async function getStaticProps() { // 페이지에서 html로 바꿔주기
     };
 }
 
-export default Index;
+export default Blog;

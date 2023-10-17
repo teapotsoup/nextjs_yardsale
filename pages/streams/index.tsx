@@ -23,7 +23,7 @@ const Streams: NextPage = () => {
     },[data])
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack hasTabBar>
       <div className="py-10 divide-y-[1px] space-y-4">
         {limitData?.streams?.map((stream) => (
             <Link key={stream.id} href={`/streams/${stream.id}`}>

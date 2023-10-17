@@ -14,11 +14,12 @@ const cookieOptions={
 }
 
 export function withApiSession(fn:any){
-    return withIronSessionApiRoute(fn,cookieOptions)
+    return withIronSessionApiRoute(fn,cookieOptions) // 쿠키를 가져와 암호화를 푼다음 요청 안에 쿠키 내용을 넣어준다.
 }
 
 export function withSsrSession(handler: any) {
-    return withIronSessionSsr(handler, cookieOptions);
+    return withIronSessionSsr(handler, cookieOptions); // withApiSession과 기능은 동일한데 SSR 전용 헬퍼 함수이다.
+    // getServerSideProps에서 인증 기능을 사용 할 수 있다.
 }
 
 

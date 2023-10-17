@@ -24,7 +24,7 @@ const Chats: NextPage = () => {
   const { data } = useSWR<ChatroomResponse>('/api/chats');
 
   return (
-    <Layout canGoBack >
+    <Layout hasTabBar canGoBack >
     <div className="py-10 divide-y-[1px] ">
       {data?.chatrooms?.map((chatroom, i) => (
           <Link href={`/chats/${chatroom.id}`} key={chatroom.id}>
@@ -41,9 +41,7 @@ const Chats: NextPage = () => {
                     <p className="text-gray-700">{chatroom?.product?.name}</p>
                   </div>
                 </div>
-
               </a>
-
           </Link>
       ))}
     </div>

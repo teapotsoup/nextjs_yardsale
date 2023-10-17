@@ -25,7 +25,7 @@ const Profile: NextPage= () => {
   const {data} = useSWR<ReviewsResponse>('/api/reviews');
 
   return (
-    <Layout canGoBack seoTitle={'Profile'}>
+    <Layout hasTabBar canGoBack seoTitle={'Profile'}>
 <div className="py-10 px-4">
       <div className="flex items-center space-x-3">
         <div className="w-16 h-16 bg-slate-500 rounded-full" />
@@ -162,6 +162,7 @@ const Page : NextPage<{profile : User}> = ({profile})=>{
     </SWRConfig>)
 }
 
+// libs/server/withSession.ts의 쿠키 부호화 헬퍼 함수인데 SSR 전용인 withSsrSession 사용
 export const getServerSideProps = withSsrSession(async function ({
                                                                      req,
                                                                  }: NextPageContext) {

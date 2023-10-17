@@ -29,7 +29,7 @@ const Community: NextPage<PostsResponse> = ({ posts }) => {
   //     latitude &&  longitude ?
   //     `/api/posts?latitude=${latitude}&longitude=${longitude}` : null)
   return (
-    <Layout canGoBack  seoTitle={'동네생활'} >
+    <Layout hasTabBar canGoBack  seoTitle={'동네생활'} >
       <div className="space-y-4 divide-y-[2px]">
         {posts?.map((post) => (
           <Link key={post?.id} href={`/community/${post?.id}`}>
@@ -106,18 +106,31 @@ const Community: NextPage<PostsResponse> = ({ posts }) => {
   );
 };
 
-export async function  getStaticProps(){
+// ISR을 사용하기 위해서는 getStaticProps 함수를 사용해야한다.
+// 복습 => getStaticProps : 정적 웹사이트를 만들도록 제공해주는 기능
+
+export async function getStaticProps(){
   console.log('정적으로 동네생활 생성 중')
-  const posts = await client.post.findMany({include:{user:true}})
+  const posts = await client.post.findMany({include:{user:{
+        select:{
+          id:true,
+          name:true,
+          avatar:true
+        },
+      },
+      _count:{
+        select:{
+          wonderings:true,
+          answers:true
+        }
+      }}})
   return {
     props:{
       posts : JSON.parse(JSON.stringify(posts))
     },
-    // revalidate:20 // 20초 전의 데이터를 보게 된다
+    // revalidate:20 // 빌드하고 설정한 시간이 지나면 이 페이지의 html을 다시 빌드한다.
     // 해당 기능(ISR)을 테스트 하기 위해서는 프로젝트를 빌드 한 후 npm rum start로 실행해야한다.
   }
 }
-
-
 
 export default Community;

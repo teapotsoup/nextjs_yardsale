@@ -1,4 +1,3 @@
-import { readdirSync } from "fs";
 import matter from "gray-matter";
 import { GetStaticProps, NextPage } from "next";
 import remarkHtml from "remark-html";
@@ -8,7 +7,7 @@ import Layout from "@components/layout";
 
 const Post: NextPage<{ post: string; data: any }> = ({ post, data }) => {
     return (
-        <Layout title={data.title} seoTitle={data.title}>
+        <Layout hasTabBar title={data.title} seoTitle={data.title}>
             <div
                 className="blog-post-content"
                 dangerouslySetInnerHTML={{ __html: post }}
@@ -18,10 +17,6 @@ const Post: NextPage<{ post: string; data: any }> = ({ post, data }) => {
 };
 
 export function getStaticPaths() { // 데이터를 미리 생성하는 페이지를 만들기 위함
-    // const files = readdirSync("./posts").map((file) => {
-    //     const [name, extension] = file.split(".");
-    //     return { params: { slug: name } };
-    // });
     return {
         paths: [],
         fallback: "blocking", // HTML 파일이 없을때 유저가 페이지를 보는 것이 블락된다.

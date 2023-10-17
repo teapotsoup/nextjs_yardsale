@@ -81,7 +81,16 @@ const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
 };
 
 export async function getServerSideProps(){
-    const products = await client?.product.findMany({});
+    // 이렇게 작성하면 하트 옆에 숫자도 캐싱되어 초기값 0도 안나온다
+    const products = await client?.product.findMany({
+        include:{
+            _count:{
+                select:{
+                    favs:true
+                }
+            }
+        }
+    });
     return {
         props:{
             products: JSON.parse(JSON.stringify(products)),
