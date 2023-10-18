@@ -1,12 +1,15 @@
 import type {NextPage, NextPageContext} from "next";
 import Link from "next/link";
 import Layout from "@components/layout";
-import useUser from "@libs/client/useUser";
+import useUser, {ProfileResponse} from "@libs/client/useUser";
 import useSWR, {SWRConfig} from "swr";
 import { Review,User } from "@prisma/client";
 import { cls } from "@libs/client/utils";
 import {withSsrSession} from "@libs/server/withSession";
 import client from "@libs/server/client";
+import {Suspense, useEffect, useState} from "react";
+import Image from "next/image";
+import Spinner from "../../public/Spinner.gif";
 
 
 interface ReviewWithUser extends Review {
@@ -18,24 +21,83 @@ interface ReviewsResponse {
   reviews: ReviewWithUser[];
 }
 
+const Reviews = () =>{
+    const [url, setUrl] = useState("");
+    useEffect(() => {
+        setUrl("/api/reviews");
+    }, []);
+    const {data} = useSWR<ReviewsResponse>(typeof window === "undefined" ? null : url);
+    return (<>
+        {data?.reviews?.length! > 0 ? (data?.reviews?.map((review:ReviewWithUser) => (
+            <div className="mt-12" key={review.id}>
+                <div className="flex space-x-4 items-center">
+                    <div className="w-12 h-12 rounded-full bg-slate-500" />
+                    <div>
+                        <h4 className="text-sm font-bold text-gray-800">{review.createdBy.name}</h4>
+                        <div className="flex items-center">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <svg
+                                    key={star}
+                                    className={cls(
+                                        "h-5 w-5",
+                                        review.score >= star
+                                            ? "text-yellow-400"
+                                            : "text-gray-400"
+                                    )}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-4 text-gray-600 text-sm">
+                    <p>
+                        {review.review}
+                    </p>
+                </div>
+            </div>
+        ))): (<div className="mt-12">리뷰가 없습니다</div>)}
+    </>)
+}
+const MiniProfile = () => {
+    const [url, setUrl] = useState("");
+    useEffect(() => {
+        setUrl("/api/users/me");
+    }, []);
+    const {data}  = useSWR<ProfileResponse>(typeof window === "undefined" ? null : url);
+    const user = data?.profile
+    return (
+        <div className="flex items-center mt-4 space-x-3">
+            {user?.avatar ? (
+                <img
+                    src={`https://imagedelivery.net/aSbksvJjax-AUC7qVnaC4A/${user?.avatar}/avatar`}
+                    className="w-16 h-16 bg-slate-500 rounded-full"
+                />
+            ) : (
+                <div className="w-16 h-16 bg-slate-500 rounded-full" />
+            )}
+            <div className="flex flex-col">
+                <span className="font-medium text-gray-900">{user?.name}</span>
+                <Link href="/profile/edit">
+                    <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+                </Link>
+            </div>
+        </div>
+    );
+};
 
 const Profile: NextPage= () => {
-
-  const {user} = useUser();
-  const {data} = useSWR<ReviewsResponse>('/api/reviews');
-
   return (
     <Layout hasTabBar canGoBack seoTitle={'Profile'}>
 <div className="py-10 px-4">
-      <div className="flex items-center space-x-3">
-        <div className="w-16 h-16 bg-slate-500 rounded-full" />
-        <div className="flex flex-col">
-          <span className="font-medium text-gray-900">{user?.name}</span>
-          <Link href="/profile/edit">
-              <a className="text-sm text-gray-700">Edit profile &rarr;</a>
-            </Link>
-        </div>
-      </div>
+    <Suspense fallback="Loading Mini Profile">
+        <MiniProfile />
+    </Suspense>
       <div className="mt-10 flex justify-around">
 
       <Link href="/profile/sold">
@@ -108,72 +170,49 @@ const Profile: NextPage= () => {
             </a>
           </Link>
       </div>
-      {data?.reviews?.map((review:ReviewWithUser) => (
-      <div className="mt-12" key={review.id}>
-      <div className="flex space-x-4 items-center">
-        <div className="w-12 h-12 rounded-full bg-slate-500" />
-        <div>
-        <h4 className="text-sm font-bold text-gray-800">{review.createdBy.name}</h4>
-        <div className="flex items-center">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      className={cls(
-                        "h-5 w-5",
-                        review.score >= star
-                          ? "text-yellow-400"
-                          : "text-gray-400"
-                      )}
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-        </div>
-      </div>
-      <div className="mt-4 text-gray-600 text-sm">
-        <p>
-          {review.review}
-        </p>
-      </div>
-    </div>
-        ))}
+    <Suspense fallback="Loading reviews...">
+        <Reviews />
+    </Suspense>
     </div>
     </Layout>
     
   );
 };
 
-const Page : NextPage<{profile : User}> = ({profile})=>{
+//{profile : User} profile
+const Page : NextPage = ({})=>{
     return (<SWRConfig
         value={{
-            fallback: {
-                "/api/users/me": {
-                    ok: true,
-                    profile,
-                },
-            },
+            // fallback: {
+            //     "/api/users/me": {
+            //         ok: true,
+            //         profile,
+            //     },
+            // },
+            suspense:true
         }}>
-        <Profile />
+        {/*<Suspense fallback={*/}
+        {/*    <Layout hasTabBar canGoBack title={"Product Loading..."} seoTitle="Product Loading...">*/}
+        {/*        <Image src={Spinner}/>*/}
+        {/*    </Layout>*/}
+        {/*}>*/}
+            <Profile />
+        {/*</Suspense>*/}
     </SWRConfig>)
 }
 
 // libs/server/withSession.ts의 쿠키 부호화 헬퍼 함수인데 SSR 전용인 withSsrSession 사용
-export const getServerSideProps = withSsrSession(async function ({
-                                                                     req,
-                                                                 }: NextPageContext) {
-    const profile = await client?.user.findUnique({
-        where: { id: req?.session.user?.id },
-    });
-    return {
-        props: {
-            profile: JSON.parse(JSON.stringify(profile)),
-        },
-    };
-});
+// export const getServerSideProps = withSsrSession(async function ({
+//                                                                      req,
+//                                                                  }: NextPageContext) {
+//     const profile = await client?.user.findUnique({
+//         where: { id: req?.session.user?.id },
+//     });
+//     return {
+//         props: {
+//             profile: JSON.parse(JSON.stringify(profile)),
+//         },
+//     };
+// });
 
 export default Page;
