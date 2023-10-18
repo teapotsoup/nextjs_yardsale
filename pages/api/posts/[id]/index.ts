@@ -35,9 +35,7 @@ const post = await client.post.findUnique({
                         avatar:true,
                     }
                 }
-            },
-            take:10,
-            skip:20
+            }
         },
         _count:{
             select:{

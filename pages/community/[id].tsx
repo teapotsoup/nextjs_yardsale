@@ -2,21 +2,26 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, {SWRConfig,unstable_serialize } from "swr";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import {useForm} from "react-hook-form";
 import {useEffect} from "react";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
-interface AnswerWithuser extends Answer{
+import client from "@libs/server/client";
+import {GetStaticPaths, GetStaticProps} from "next";
+import Image from "next/image";
+import Spinner from '../../public/Spinner.gif';
+
+interface AnswerWithUser extends Answer{
   user:User;
 }
 
 interface PostWithUser extends Post {
   user: User;
   _count: { answers: number; wonderings: number };
-  answers: AnswerWithuser[];
+  answers: AnswerWithUser[];
 }
 interface AnswerForm {
   answer: string;
@@ -27,6 +32,7 @@ interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
   isWondering: boolean;
+  id:any
 }
 
 interface AnswerForm{
@@ -86,12 +92,14 @@ const CommunityPostDetail: NextPage = () => {
     }
   }, [answerData,reset,mutate]);
 
-  // useEffect(() => {
-  //   console.log(data)
-  //   if (data?.post && !data.ok) {
-  //     router.push("/community");
-  //   }
-  // }, [data, router]);
+  if(router.isFallback){ // fallback:true 일경우 빌드 되지 않은 페이지를 빌드 하는 동안 해당 화면을 먼저 보여준다.
+    return (
+        <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
+          <Image src={Spinner}/>
+        </Layout>
+    )
+  }
+
 
   return (
     <Layout canGoBack>
@@ -188,5 +196,97 @@ const CommunityPostDetail: NextPage = () => {
     </Layout>
   );
 };
+
+const Page :NextPage<CommunityPostResponse> = ({id, post,isWondering}) =>{
+
+  console.log("Page의 post : ", post)
+  return (
+      <SWRConfig
+          value={{
+            fallback: {
+              [unstable_serialize(["api", "posts", id])]: {
+                ok: true,
+                post,
+                isWondering,
+              },
+            },
+          }}
+      >
+        <CommunityPostDetail />
+      </SWRConfig>
+  )
+}
+
+
+export const getStaticPaths : GetStaticPaths = ()=>{
+  return{
+    paths:[], // 빌드 시 패스를 안 만들 경우 빈 배열로 둠
+    fallback:true
+    // "blocking"
+  }
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+  const id = ctx?.params?.id;
+  if (!id) {
+    return {
+      props: {},
+    };
+  }
+  const post = await client.post.findUnique({
+    where:{
+      id:Number(id),
+    },
+    include:{
+      user:{
+        select:{
+          id:true,
+          name:true,
+          avatar:true
+        }
+      },
+      answers:{
+        select:{
+          answer:true,
+          id:true,
+          user:{
+            select:{
+              id:true,
+              name:true,
+              avatar:true,
+            }
+          }
+        },
+      },
+      _count:{
+        select:{
+          answers:true,
+          wonderings:true
+        }
+      }
+    }
+  })
+  const isWondering = Boolean(
+      await client.wondering.findFirst({
+        where: {
+          postId: Number(ctx?.params?.id),
+          userId: post?.user?.id,
+        },
+        select: {
+          id: true,
+        },
+      })
+  );
+  console.log("getStaticProps의 post : ", post)
+  return {
+    props:{
+      id,
+      post : JSON.parse(JSON.stringify(post)),
+      isWondering:isWondering,
+    },
+    revalidate:20 // 빌드하고 설정한 시간이 지나면 이 페이지의 html을 다시 빌드한다.
+    // 해당 기능(ISR)을 테스트 하기 위해서는 프로젝트를 빌드 한 후 npm rum start로 실행해야한다.
+  }
+}
 
 export default CommunityPostDetail;

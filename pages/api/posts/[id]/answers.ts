@@ -27,10 +27,12 @@ const newAnswer = await client.answer.create({
       answer,
     }
 });
-  res.json({
-    ok:true,
-    answer : newAnswer,
-  })
+    try {
+        await res.revalidate("/community")
+        return res.json({ ok: true, answer: newAnswer });
+    } catch (err) {
+        return res.status(500);
+    }
 }
 
 export default  withApiSession(withHandler({

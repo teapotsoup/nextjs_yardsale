@@ -43,9 +43,7 @@ async function handler(
             },
         });
     }
-    res.json({
-        ok:true,
-    })
+    return res.json({ ok: true });
 }
 
 export default withApiSession(withHandler({
