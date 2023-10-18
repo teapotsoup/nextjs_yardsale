@@ -1,235 +1,199 @@
-//schema.prisma 파일은 프리스마 설정을 하고, 데이터가 어떻게 생겼는지 정의하는 파일
+// schema.prisma 파일은 프리스마 설정을 하고, 데이터가 어떻게 생겼는지 정의하는 파일
 
 generator client {
-  provider = "prisma-client-js"
+	provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-  relationMode = "prisma"
-   //외래키 참조 무결성 설정
+	provider     = "mysql"
+	url          = env("DATABASE_URL")
+	relationMode = "prisma"
+	// 외래키 참조 무결성 설정
 }
 
-model User{
-  id              Int     @id @default(autoincrement())
-  phone           String? @unique
-  email           String? @unique
-  name            String
-  avatar          String?
-  introduce       String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  tokens          Token[]
-  products        Product[]
-  fav             Fav[]
-  posts           Post[]
-  answer          Answer[]
-  wonderings      Wondering[]
-  writtenReviews  Review[] @relation(name: "writtenReviews")
-  receivedReviews Review[] @relation(name: "receivedReviews")
-  sales           Sale[]
-  Purchase        Purchase[]
-  record          Record[]
-  streams         Stream[]
-  messages        Message[]
-  buyerChat       Chatroom[]    @relation(name: "buyer")
-  sellerChat      Chatroom[]    @relation(name: "seller")
-  chatMessages    ChatMessage[]
+model User {
+	id              Int           @id @default(autoincrement())
+	phone           String?       @unique
+	email           String?       @unique
+	name            String
+	avatar          String?
+	introduce       String?
+	createdAt       DateTime      @default(now())
+	updatedAt       DateTime      @updatedAt
+	tokens          Token[]
+	products        Product[]
+	posts           Post[]
+	answer          Answer[]
+	wonderings      Wondering[]
+	writtenReviews  Review[]      @relation(name: "writtenReviews")
+	receivedReviews Review[]      @relation(name: "receivedReviews")
+	record          Record[]
+	streams         Stream[]
+	messages        Message[]
+	buyerChat       Chatroom[]    @relation(name: "buyer")
+	sellerChat      Chatroom[]    @relation(name: "seller")
+	chatMessages    ChatMessage[]
 }
 
+model Token {
+	id        Int      @id @default(autoincrement())
+	payload   String   @unique
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId    Int
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
 
-model Token{
-   id        Int @id @default(autoincrement())
-   payload   String @unique
-   user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-   userId    Int
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
-  @@index([userId])
+	@@index([userId])
 }
 
-model Product{
-   id        Int @id @default(autoincrement())
-   createdAt DateTime @default(now())
-   updatedAt DateTime @updatedAt
-   user      User @relation(fields: [userId], references: [id], onDelete: Cascade) // Cascade 부모 레코드 삭제시 자식 레코드도 삭제 시킨다.
-   userId    Int
-   image     String
-   name      String
-   price     Int
-   description String @db.MediumText
-   favs      Fav[]
-  sales      Sale[]
-  Purchase   Purchase[]
-  records    Record[]
-  chatrooms   Chatroom[]
-  @@index([userId])
+model Product {
+	id          Int        @id @default(autoincrement())
+	createdAt   DateTime   @default(now())
+	updatedAt   DateTime   @updatedAt
+	user        User       @relation(fields: [userId], references: [id], onDelete: Cascade) // Cascade 부모 레코드 삭제시 자식 레코드도 삭제 시킨다.
+	userId      Int
+	image       String
+	name        String
+	price       Int
+	description String     @db.MediumText
+	records     Record[]
+	chatrooms   Chatroom[]
+
+	@@index([userId])
 }
 
-model Post{
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  question  String @db.MediumText
-  latitude  Float?
-  longitude Float?
-  answers   Answer[]
-  wonderings Wondering[]
-  @@index([userId])
+model Post {
+	id         Int         @id @default(autoincrement())
+	createdAt  DateTime    @default(now())
+	updatedAt  DateTime    @updatedAt
+	user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId     Int
+	question   String      @db.MediumText
+	latitude   Float?
+	longitude  Float?
+	answers    Answer[]
+	wonderings Wondering[]
+
+	@@index([userId])
 }
 
-model Answer{
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    Int
-  answer    String @db.MediumText
-  @@index([userId])
-  @@index([postId])
+model Answer {
+	id        Int      @id @default(autoincrement())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId    Int
+	post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+	postId    Int
+	answer    String   @db.MediumText
+
+	@@index([userId])
+	@@index([postId])
 }
 
-model Wondering{
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    Int
-  @@index([userId])
-  @@index([postId])
+model Wondering {
+	id        Int      @id @default(autoincrement())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId    Int
+	post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+	postId    Int
+
+	@@index([userId])
+	@@index([postId])
 }
 
 model Review {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  review       String   @db.MediumText
-  createdBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
-  createdById  Int
-  createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
-  createdForId Int
-  score        Int      @default(1)
-  @@index([createdById])
-  @@index([createdForId])
-}
+	id           Int      @id @default(autoincrement())
+	createdAt    DateTime @default(now())
+	updatedAt    DateTime @updatedAt
+	review       String   @db.MediumText
+	createdBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
+	createdById  Int
+	createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
+	createdForId Int
+	score        Int      @default(1)
 
-model Sale {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([userId])
-  @@index([productId])
-}
-
-model Purchase {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([userId])
-  @@index([productId])
-}
-
-model Fav {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([userId])
-  @@index([productId])
+	@@index([createdById])
+	@@index([createdForId])
 }
 
 model Record {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  kind      Kind
-  updatedAt DateTime @updatedAt
-  @@index([userId])
-  @@index([productId])
+	id        Int      @id @default(autoincrement())
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId    Int
+	product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+	productId Int
+	createdAt DateTime @default(now())
+	kind      Kind
+	updatedAt DateTime @updatedAt
+
+	@@index([userId])
+	@@index([productId])
 }
 
 enum Kind {
-  Purchase
-  Sale
-  Fav
+	Purchase
+	Sale
+	Fav
 }
 
-model Stream{
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  name        String
-  description String    @db.MediumText
-  price       Int
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      Int
-  messages    Message[]
-  @@index([userId])
+model Stream {
+	id          Int       @id @default(autoincrement())
+	createdAt   DateTime  @default(now())
+	updatedAt   DateTime  @updatedAt
+	name        String
+	description String    @db.MediumText
+	price       Int
+	user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId      Int
+	messages    Message[]
+
+	@@index([userId])
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  message   String   @db.MediumText
-  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
-  streamId  Int
+	id        Int      @id @default(autoincrement())
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId    Int
+	message   String   @db.MediumText
+	stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+	streamId  Int
 
-  @@index([userId])
-  @@index([streamId])
+	@@index([userId])
+	@@index([streamId])
 }
 
-
 model Chatroom {
-  id           Int           @id @default(autoincrement())
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  product      Product       @relation(fields: [productId], references: [id])
-  productId    Int
-  buyer        User          @relation(name: "buyer", fields: [buyerId], references: [id], onDelete: Cascade)
-  buyerId      Int
-  seller       User          @relation(name: "seller", fields: [sellerId], references: [id], onDelete: Cascade)
-  sellerId     Int
-  chatMessages ChatMessage[]
+	id           Int           @id @default(autoincrement())
+	createdAt    DateTime      @default(now())
+	updatedAt    DateTime      @updatedAt
+	product      Product       @relation(fields: [productId], references: [id])
+	productId    Int
+	buyer        User          @relation(name: "buyer", fields: [buyerId], references: [id], onDelete: Cascade)
+	buyerId      Int
+	seller       User          @relation(name: "seller", fields: [sellerId], references: [id], onDelete: Cascade)
+	sellerId     Int
+	chatMessages ChatMessage[]
 
-  @@index([productId])
-  @@index([buyerId])
-  @@index([sellerId])
+	@@index([productId])
+	@@index([buyerId])
+	@@index([sellerId])
 }
 
 model ChatMessage {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     Int
-  message    String   @db.MediumText
-  chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
-  chatroomId Int
+	id         Int      @id @default(autoincrement())
+	createdAt  DateTime @default(now())
+	updatedAt  DateTime @updatedAt
+	user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+	userId     Int
+	message    String   @db.MediumText
+	chatroom   Chatroom @relation(fields: [chatroomId], references: [id], onDelete: Cascade)
+	chatroomId Int
 
-  @@index([userId])
-  @@index([chatroomId])
+	@@index([userId])
+	@@index([chatroomId])
 }
