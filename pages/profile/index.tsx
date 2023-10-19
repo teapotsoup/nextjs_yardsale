@@ -15,7 +15,27 @@ interface ReviewsResponse {
   ok:boolean;
   reviews: ReviewWithUser[];
 }
-
+const MiniProfile = () => {
+    const [url, setUrl] = useState("");
+    useEffect(() => {
+        setUrl("/api/users/me");
+    }, []);
+    const {data}  = useSWR<ProfileResponse>(typeof window === "undefined" ? null : url);
+    const user = data?.profile
+    return (
+        <div className="flex items-center mt-4 space-x-3">
+            {user?.avatar ? null : (
+                <div className="w-16 h-16 bg-slate-500 rounded-full" />
+            )}
+            <div className="flex flex-col">
+                <span className="font-medium text-gray-900">{user?.name}</span>
+                <Link href="/profile/edit">
+                    <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+                </Link>
+            </div>
+        </div>
+    );
+};
 const Reviews = () =>{
     const [url, setUrl] = useState("");
     useEffect(() => {
@@ -59,27 +79,7 @@ const Reviews = () =>{
         ))): (<div className="mt-12">리뷰가 없습니다</div>)}
     </>)
 }
-const MiniProfile = () => {
-    const [url, setUrl] = useState("");
-    useEffect(() => {
-        setUrl("/api/users/me");
-    }, []);
-    const {data}  = useSWR<ProfileResponse>(typeof window === "undefined" ? null : url);
-    const user = data?.profile
-    return (
-        <div className="flex items-center mt-4 space-x-3">
-            {user?.avatar ? null : (
-                <div className="w-16 h-16 bg-slate-500 rounded-full" />
-            )}
-            <div className="flex flex-col">
-                <span className="font-medium text-gray-900">{user?.name}</span>
-                <Link href="/profile/edit">
-                    <a className="text-sm text-gray-700">Edit profile &rarr;</a>
-                </Link>
-            </div>
-        </div>
-    );
-};
+
 
 const Profile: NextPage= () => {
   return (
@@ -109,7 +109,7 @@ const Profile: NextPage= () => {
                 </svg>
               </div>
               <span className="text-sm mt-2 font-medium text-gray-700">
-                판매내역
+                판매완료
               </span>
             </a>
           </Link>
@@ -132,7 +132,7 @@ const Profile: NextPage= () => {
                 </svg>
               </div>
               <span className="text-sm mt-2 font-medium text-gray-700">
-                구매내역
+                구매완료
               </span>
             </a>
           </Link>
@@ -165,7 +165,6 @@ const Profile: NextPage= () => {
     </Suspense>
     </div>
     </Layout>
-    
   );
 };
 

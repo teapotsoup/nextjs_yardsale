@@ -17,18 +17,17 @@ async function handler(
           userId: user?.id,
           kind: kind as Kind,
         },
-        // include: {
-        //     product:{
-        //         include:{
-        //             _count:{
-        //                 select:{
-        //                     favs: true,
-        //                 }
-        //             }
-        //         }
-        //     }
-            // product: true,
-          // },
+        include: {
+            product:{
+                include:{
+                    _count:{
+                        select:{
+                            records: { where: { kind: 'Fav' } },
+                        }
+                    }
+                }
+            }
+          },
       });
       res.status(200).json({ ok: true, records });
 }

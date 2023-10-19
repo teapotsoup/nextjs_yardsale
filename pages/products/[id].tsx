@@ -16,6 +16,7 @@ import client from "@libs/server/client";
 
 interface ProductWithUser extends Product {
   user: User;
+  _count:any
 }
 
 interface ItemDetailResponse  {
@@ -44,7 +45,7 @@ const ItemDetail: NextPage = () => {
       );
   const onFavClick = () => {
     if(!data) return;
-    boundMutate(prev=>prev && {...prev, isLiked:!prev.isLiked},false) // 비구조화 할당으로 data의 isLiked 값 상태 변경.
+    boundMutate(prev=>prev && {...prev,product:{...prev.product,_count:{records: prev.isLiked ? prev.product._count.records-1 : prev.product._count.records+1}}, isLiked:!prev.isLiked},false) // 비구조화 할당으로 data의 isLiked 값 상태 변경.
     toggleFav({});
   };
   const onTalkToSellerClick = ()=> {
@@ -74,8 +75,6 @@ const ItemDetail: NextPage = () => {
     <Layout canGoBack seoTitle="Product Detail">
       <div className="px-4  py-4">
         <div className="mb-8">
-          {/*{data ?  (*/}
-
               <><div className="h-96 bg-slate-300" />
             <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-slate-300" />
@@ -100,7 +99,6 @@ const ItemDetail: NextPage = () => {
               <p className="text-base my-6 text-gray-700">
                 {data?.product?.description}
               </p>
-
               {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
                 <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
@@ -113,6 +111,7 @@ const ItemDetail: NextPage = () => {
                     }
                 >
                   {data?.isLiked ? (
+                      <>
                       <svg 
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-6 w-6" 
@@ -123,7 +122,11 @@ const ItemDetail: NextPage = () => {
                         d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" 
                         clipRule="evenodd" />
                       </svg>
-                  ) :(<svg
+                      {data?.product?._count?.records}
+                      </>
+                  ) :(
+                      <>
+                      <svg
                       className="h-6 w-6"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -137,13 +140,13 @@ const ItemDetail: NextPage = () => {
                         strokeWidth="2"
                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                     />
-                  </svg>)}
+                  </svg>
+                        {data?.product?._count?.records}
+                      </>
+                        )}
                 </button>
               </div>)}
-              
             </div></>
-
-          {/*):(<Image src={Spinner}/>) }*/}
         </div>
         <div>
           {data ?  (<>
@@ -170,7 +173,6 @@ const ItemDetail: NextPage = () => {
   );
 };
 
-
 const Page : NextPage<ItemDetailResponse> = ({product,relatedProducts,isLiked,productId})=>{
   return (<SWRConfig
       value={{
@@ -192,7 +194,6 @@ export const getStaticPaths : GetStaticPaths = ()=>{
   return{
     paths:[], // 빌드 시 패스를 안 만들 경우 빈 배열로 둠
     fallback:true
-        // "blocking"
   }
 }
 

@@ -20,6 +20,11 @@ async function handler(
                     avatar:true
                 }
             },
+            _count:{
+                select:{
+                    records: { where: { kind: 'Fav' } },
+                }
+            }
         }
     })
     const terms = product?.name.split(" ").map((word: string)=>({
