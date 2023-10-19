@@ -173,21 +173,9 @@ const Profile: NextPage= () => {
 const Page : NextPage = ({})=>{
     return (<SWRConfig
         value={{
-            // fallback: {
-            //     "/api/users/me": {
-            //         ok: true,
-            //         profile,
-            //     },
-            // },
             suspense:true
         }}>
-        {/*<Suspense fallback={*/}
-        {/*    <Layout hasTabBar canGoBack title={"Product Loading..."} seoTitle="Product Loading...">*/}
-        {/*        <Image src={Spinner}/>*/}
-        {/*    </Layout>*/}
-        {/*}>*/}
             <Profile />
-        {/*</Suspense>*/}
     </SWRConfig>)
 }
 

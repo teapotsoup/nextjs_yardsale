@@ -12,17 +12,23 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
             status: 403,
         });
     }
-    const res = NextResponse.next();
-    const session = await getIronSession(req, res, {
-        cookieName: "carrot-session",
-        password: process.env.COOKIE_PASSWORD!,
-    });
-
-    if (!session.user && !req.url.includes("/enter")) {
-        req.nextUrl.searchParams.set("from", req.nextUrl.pathname);
-        req.nextUrl.pathname = "/enter";
-        return NextResponse.redirect(req.nextUrl);
-    }
+    // const res = NextResponse.next();
+    // const session = await getIronSession(req, res, {
+    //     cookieName: "carrot-session",
+    //     password: process.env.COOKIE_PASSWORD!,
+    // });
+    //
+    // if (!session.user && !req.url.includes("/enter")) {
+    //     req.nextUrl.searchParams.set("from", req.nextUrl.pathname);
+    //     req.nextUrl.pathname = "/enter";
+    //     return NextResponse.redirect(req.nextUrl);
+    // }
+    // if (req.nextUrl.pathname.startsWith("/api")) {
+        if (!req.url.includes("/enter") && !req.cookies.has("carrot-session")) {
+            req.nextUrl.pathname = "/enter";
+            return NextResponse.redirect(req.nextUrl);
+        }
+    // }
     // return NextResponse.json({ ok: true });
 }
 
