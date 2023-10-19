@@ -8,7 +8,7 @@ import Head from "next/head";
 import client from "@libs/server/client";
 
 export interface ProductWithCount extends Product{
-    _count:{favs:number}
+    _count:{records:number}
 }
 
 type ProductsResponse={
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
                             key={product.id}
                             title={product.name}
                             price={product.price}
-                            hearts={product._count?.favs || 0}
+                            hearts={product._count?.records || 0}
                         />
                     ))
                     : "Loading..."}
@@ -86,7 +86,7 @@ export async function getServerSideProps(){
         include:{
             _count:{
                 select:{
-                    favs:true
+                    records:{ where: { kind: 'Fav' } },
                 }
             }
         }

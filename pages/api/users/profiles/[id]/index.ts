@@ -19,7 +19,7 @@ async function handler(
                     products:{
                         select:{
                             id:true,
-                            favs:true,
+                            records:{ where: { kind: 'Fav' } },
                             price:true,
                             name:true,
                         }

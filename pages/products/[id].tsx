@@ -2,7 +2,7 @@ import type {GetStaticPaths, GetStaticProps, NextPage} from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
-import useSWR, { useSWRConfig } from "swr";
+import useSWR, {SWRConfig, unstable_serialize, useSWRConfig} from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
 import products from "pages/api/products";
@@ -23,6 +23,7 @@ interface ItemDetailResponse  {
   product: ProductWithUser;
   relatedProducts: Product[];
   isLiked:boolean
+  productId:number
 };
 
 interface ChatroomResponse {
@@ -30,7 +31,7 @@ interface ChatroomResponse {
   chatroomId: String;
 }
 
-const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLiked}) => {
+const ItemDetail: NextPage = () => {
   const {user : sessionUser} = useUser()
   const router = useRouter();
   const { data,mutate:boundMutate } = useSWR<ItemDetailResponse>(
@@ -80,9 +81,9 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLik
               <div className="w-12 h-12 rounded-full bg-slate-300" />
               <div>
                 <p className="text-sm font-medium text-gray-500">
-                  {product?.user?.name}
+                  {data?.product?.user?.name}
                 </p>
-                <Link href={sessionUser?.id === product?.user?.id ? `/profile`  : `/profile/${product?.user?.id}`}>
+                <Link href={sessionUser?.id === data?.product?.user?.id ? `/profile`  : `/profile/${data?.product?.user?.id}`}>
                   <a className="text-xs font font-medium text-gray-500">
                     View profile &rarr;
                   </a>
@@ -91,27 +92,27 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLik
             </div>
             <div className="mt-5">
               <h1 className="text-3xl font-bold text-gray-800">
-                {product?.name}
+                {data?.product?.name}
               </h1>
               <p className="text-3xl block mt-3 text-gray-900">
-                ${product?.price}
+                ${data?.product?.price}
               </p>
               <p className="text-base my-6 text-gray-700">
-                {product?.description}
+                {data?.product?.description}
               </p>
 
-              {sessionUser?.id === product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
+              {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
                 <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
                     onClick={onFavClick}
                     className={
                       cls(
                           "p-3 rounded-md flex items-center  hover:bg-gray-100 justify-center",
-                          isLiked ? "hover:text-red-500 text-red-400":" hover:text-gray-500 text-gray-400"
+                          data?.isLiked ? "hover:text-red-500 text-red-400":" hover:text-gray-500 text-gray-400"
                       )
                     }
                 >
-                  {isLiked ? (
+                  {data?.isLiked ? (
                       <svg 
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-6 w-6" 
@@ -148,7 +149,7 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLik
           {data ?  (<>
             <h2 className="text-2xl font-bold text-gray-800">Similar items</h2>
             <div className=" mt-6 grid grid-cols-2 gap-4">
-              {relatedProducts.map((product) => (
+              {data?.relatedProducts.map((product) => (
                   <div key={product.id}>
                     <div className="h-56 w-full mb-4 bg-slate-300" />
                     <div className="text-center">
@@ -169,6 +170,24 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({product,relatedProducts,isLik
   );
 };
 
+
+const Page : NextPage<ItemDetailResponse> = ({product,relatedProducts,isLiked,productId})=>{
+  return (<SWRConfig
+      value={{
+        fallback: {
+          [unstable_serialize(["api", "products", productId])]: {
+                ok: true,
+              product,
+            isLiked,
+            relatedProducts,
+            productId
+            },
+        },
+      }}>
+    <ItemDetail />
+  </SWRConfig>)
+}
+
 export const getStaticPaths : GetStaticPaths = ()=>{
   return{
     paths:[], // 빌드 시 패스를 안 만들 경우 빈 배열로 둠
@@ -178,14 +197,15 @@ export const getStaticPaths : GetStaticPaths = ()=>{
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  if (!ctx?.params?.id) {
+  const productId = ctx?.params?.id
+  if (!productId) {
     return {
       props: {},
     };
   }
   const product = await client.product.findUnique({
     where: {
-      id: +ctx.params.id.toString(),
+      id: Number(productId),
     },
     include: {
       user: {
@@ -197,6 +217,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       },
     },
   });
+  const userId = product?.user?.id
   const terms = product?.name.split(" ").map((word) => ({
     name: {
       contains: word,
@@ -212,12 +233,24 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       },
     },
   });
-  const isLiked = false;
+  const isLiked = Boolean(
+      await client.record.findFirst({
+        where:{
+          productId:product?.id,
+          userId:userId,
+          kind:'Fav'
+        },
+        select:{
+          id:true
+        }
+      })
+  )
   return {
     props: {
       product: JSON.parse(JSON.stringify(product)),
       relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
       isLiked,
+      productId
     },
   };
 };

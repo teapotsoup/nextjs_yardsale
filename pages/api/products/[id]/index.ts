@@ -36,17 +36,18 @@ async function handler(
         }
     });
     const isLiked = Boolean(
-        await client.fav.findFirst({
+        await client.record.findFirst({
             where:{
                 productId:product?.id,
-                userId:user?.id
+                userId:user?.id,
+                kind:'Fav'
             },
             select:{
                 id:true
             }
         })
     )
-    res.json({ok:true,product, isLiked,relatedProducts})
+    res.json({ok:true,product, isLiked,relatedProducts,userId:user?.id})
 }
 
 export default withApiSession(
