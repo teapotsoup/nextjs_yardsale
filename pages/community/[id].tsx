@@ -95,7 +95,7 @@ const CommunityPostDetail: NextPage = () => {
   if(router.isFallback){ // fallback:true 일경우 빌드 되지 않은 페이지를 빌드 하는 동안 해당 화면을 먼저 보여준다.
     return (
         <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
-          <Image src={Spinner}/>
+          <Image src={Spinner} alt = "spinner"/>
         </Layout>
     )
   }

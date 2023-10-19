@@ -1,16 +1,11 @@
-import type {NextPage, NextPageContext} from "next";
+import type {NextPage} from "next";
 import Link from "next/link";
 import Layout from "@components/layout";
-import useUser, {ProfileResponse} from "@libs/client/useUser";
+import {ProfileResponse} from "@libs/client/useUser";
 import useSWR, {SWRConfig} from "swr";
 import { Review,User } from "@prisma/client";
 import { cls } from "@libs/client/utils";
-import {withSsrSession} from "@libs/server/withSession";
-import client from "@libs/server/client";
 import {Suspense, useEffect, useState} from "react";
-import Image from "next/image";
-import Spinner from "../../public/Spinner.gif";
-
 
 interface ReviewWithUser extends Review {
   createdBy: User  
@@ -73,12 +68,7 @@ const MiniProfile = () => {
     const user = data?.profile
     return (
         <div className="flex items-center mt-4 space-x-3">
-            {user?.avatar ? (
-                <img
-                    src={`https://imagedelivery.net/aSbksvJjax-AUC7qVnaC4A/${user?.avatar}/avatar`}
-                    className="w-16 h-16 bg-slate-500 rounded-full"
-                />
-            ) : (
+            {user?.avatar ? null : (
                 <div className="w-16 h-16 bg-slate-500 rounded-full" />
             )}
             <div className="flex flex-col">

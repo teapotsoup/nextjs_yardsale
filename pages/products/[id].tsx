@@ -65,7 +65,7 @@ const ItemDetail: NextPage = () => {
   if(router.isFallback){
     return (
         <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
-          <Image src={Spinner}/>
+          <Image src={Spinner} alt = "spinner"/>
         </Layout>
     )
   }
