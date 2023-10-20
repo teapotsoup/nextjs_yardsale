@@ -23,7 +23,7 @@ const Streams: NextPage = () => {
     },[data])
 
   return (
-    <Layout canGoBack hasTabBar>
+    <Layout  hasTabBar>
       <div className="py-10 divide-y-[1px] space-y-4">
         {limitData?.streams?.map((stream) => (
             <Link key={stream.id} href={`/streams/${stream.id}`}>
@@ -32,14 +32,12 @@ const Streams: NextPage = () => {
                 <h3 className='mt-2 text-lg  text-gray-700'>{stream.id}</h3>
             </a>
           </Link>
-
         ))}
           <Pagination
               totalCount={Number(totalCount)}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
           />
-
        <FloatingButton href="/streams/create">
           <svg
             className="w-6 h-6"

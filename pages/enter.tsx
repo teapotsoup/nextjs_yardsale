@@ -35,9 +35,7 @@ type MutationResult = {
 };
 
 const Enter: NextPage = () => {
-  // 무한 랜더링
-  // const {user} = useUser()
-  const [enter, { loading, data, error }] = useMutation<MutationResult>("/api/users/enter");
+  const [enter, { loading, data }] = useMutation<MutationResult>("/api/users/enter");
   const [confirmToken, { loading: tokenLoading, data: tokenData }] = useMutation<MutationResult>("/api/users/confirm");
   const { register, handleSubmit, reset,formState: { errors } } = useForm<EnterForm>();
   const { register: tokenRegister, handleSubmit: tokenHandleSubmit } = useForm<TokenForm>();
@@ -62,15 +60,11 @@ const Enter: NextPage = () => {
   const router = useRouter()
 
   useEffect(()=>{
-    // (async () => {
-    // console.log('엔터창 랜더링')
-      console.log("enter 창의 토큰 데이터 : ", tokenData)
       if(tokenData?.ok){
         router.push("/")
       }
-    // })();
   },[tokenData, router]) //token이 존재하면 home page로 새로고침
-  // , tokenLoading,loading,tokenHandleSubmit
+
   return (
     <div className="mt-16 px-4">
       <h3 className="text-3xl font-bold text-center">Welcome to Yard Sale</h3>

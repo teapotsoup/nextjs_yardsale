@@ -19,10 +19,9 @@ interface ProfileResponse {
 
 
 const Profile: NextPage<ProfileResponse> = () => {
-    const {user} = useUser();
     const router = useRouter();
-    const {data,mutate} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
-    // console.log(data)
+    const {data} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
+
     return (
         <Layout canGoBack>
             <div className="py-10 px-4">
@@ -30,9 +29,14 @@ const Profile: NextPage<ProfileResponse> = () => {
                     <div className="w-16 h-16 bg-slate-500 rounded-full" />
                     <div className="flex flex-col">
                         <span className="font-medium text-gray-900">{data?.profile?.name}</span>
-                        <span className="font-medium text-gray-900">{String(data?.profile?.createdAt).split('T')[0] }</span>
+                        <span className="font-medium text-gray-900">{"가입일자 : " + String(data?.profile?.createdAt).split('T')[0] }</span>
                     </div>
                 </div>
+                <div className="pt-5">
+                    <span className="font-bold text-gray-900">판매 중</span>
+                    <hr className="h-px my-2 bg-gray-700 border-0"/>
+                </div>
+
                 {data?.profile?.products?.length! > 0 ?
                     (data?.profile?.products?.map((product : any) => (
                         <Item
@@ -44,13 +48,16 @@ const Profile: NextPage<ProfileResponse> = () => {
                         />
                     )))
                     :<div>판매하는 상품이 없습니다</div>}
+                <div className="pt-6">
+                    <span className="font-bold text-gray-900">판매자 리뷰</span>
+                    <hr className="h-px my-2 bg-gray-700 border-0"/>
+                </div>
                 {data?.profile?.receivedReviews?.length! > 0 ?
                     (data?.profile?.receivedReviews?.map((review : any) => (
-                    <div className="mt-12" key={review.id}>
+                    <div className="mt-5" key={review.id}>
                     <div className="flex space-x-4 items-center">
                     <div className="w-12 h-12 rounded-full bg-slate-500" />
                     <div>
-                    {/*<h4 className="text-sm font-bold text-gray-800">{review.createdBy.name}</h4>*/}
                     <div className="flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <svg

@@ -6,6 +6,9 @@ import useSWR, {SWRConfig} from "swr";
 import { Review,User } from "@prisma/client";
 import { cls } from "@libs/client/utils";
 import {Suspense, useEffect, useState} from "react";
+import Button from "@components/button";
+import {useRouter} from "next/router";
+import useMutation from "@libs/client/useMutation";
 
 interface ReviewWithUser extends Review {
   createdBy: User  
@@ -15,23 +18,42 @@ interface ReviewsResponse {
   ok:boolean;
   reviews: ReviewWithUser[];
 }
+
+type MutationResult = {
+    ok: boolean;
+};
+
 const MiniProfile = () => {
     const [url, setUrl] = useState("");
+    const router =  useRouter()
+    const [deleteToken,] = useMutation<MutationResult>("/api/users/remove");
+
     useEffect(() => {
         setUrl("/api/users/me");
     }, []);
     const {data}  = useSWR<ProfileResponse>(typeof window === "undefined" ? null : url);
     const user = data?.profile
+
+    const handleLogout = () => {
+        deleteToken({})
+        router.replace("/enter");
+    }
+
     return (
-        <div className="flex items-center mt-4 space-x-3">
-            {user?.avatar ? null : (
-                <div className="w-16 h-16 bg-slate-500 rounded-full" />
-            )}
-            <div className="flex flex-col">
-                <span className="font-medium text-gray-900">{user?.name}</span>
-                <Link href="/profile/edit">
-                    <a className="text-sm text-gray-700">Edit profile &rarr;</a>
-                </Link>
+        <div className="flex justify-between items-center">
+            <div className="flex items-center mt-4 space-x-3">
+                {user?.avatar ? null : (
+                    <div className="w-16 h-16 bg-slate-500 rounded-full" />
+                )}
+                <div className="flex flex-col">
+                    <span className="font-medium text-gray-900">{user?.name}</span>
+                    <Link href="/profile/edit">
+                        <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+                    </Link>
+                </div>
+            </div>
+            <div>
+                <Button text="로그아웃" onClick={handleLogout} />
             </div>
         </div>
     );
@@ -83,13 +105,12 @@ const Reviews = () =>{
 
 const Profile: NextPage= () => {
   return (
-    <Layout hasTabBar canGoBack seoTitle={'Profile'}>
+    <Layout hasTabBar  seoTitle={'Profile'}>
 <div className="py-10 px-4">
     <Suspense fallback="Loading Mini Profile">
         <MiniProfile />
     </Suspense>
       <div className="mt-10 flex justify-around">
-
       <Link href="/profile/sold">
             <a className="flex flex-col items-center">
               <div className="w-14 h-14 text-white bg-orange-400 rounded-full flex items-center justify-center">

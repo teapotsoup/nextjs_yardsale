@@ -65,14 +65,14 @@ const ItemDetail: NextPage = () => {
 
   if(router.isFallback){
     return (
-        <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
+        <Layout hasTabBar canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
           <Image src={Spinner} alt = "spinner"/>
         </Layout>
     )
   }
 
   return (
-    <Layout canGoBack seoTitle="Product Detail">
+    <Layout hasTabBar canGoBack title={"Product Detail"} seoTitle="Product Detail">
       <div className="px-4  py-4">
         <div className="mb-8">
               <><div className="h-96 bg-slate-300" />
