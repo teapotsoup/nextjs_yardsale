@@ -26,7 +26,7 @@ type MutationResult = {
 const MiniProfile = () => {
     const [url, setUrl] = useState("");
     const router =  useRouter()
-    const [deleteToken,] = useMutation<MutationResult>("/api/users/remove");
+    const [deleteSession,{loading}] = useMutation<MutationResult>("/api/users/remove");
 
     useEffect(() => {
         setUrl("/api/users/me");
@@ -35,8 +35,10 @@ const MiniProfile = () => {
     const user = data?.profile
 
     const handleLogout = () => {
-        deleteToken({})
-        router.replace("/enter");
+        deleteSession({})
+        if(!loading){
+            router.replace("/enter");
+        }
     }
 
     return (

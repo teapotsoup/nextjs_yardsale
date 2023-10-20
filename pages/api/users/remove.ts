@@ -11,7 +11,6 @@ async function handler(
   const {
     session: { user },
   } = req;
-  console.log("세션의 유저 : ", user)
   if(user){
     // @ts-ignore
     await req.session.destroy(()=>{});
