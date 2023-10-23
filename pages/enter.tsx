@@ -49,13 +49,14 @@ const Enter: NextPage = () => {
     setMethod("phone");
   };
   const onValid =  (validForm: EnterForm) => {
-    // console.log('onValid 접근 후 로딩 상태 ', loading)
-    if (loading) return;``
+    if (loading) return;
     enter(validForm);
+      window.alert('토큰이 전송됐습니다.')
   };
   const onTokenValid =  (validForm: TokenForm) => {
     if (tokenLoading) return;
      confirmToken(validForm);
+       window.alert('토큰이 확인됐습니다.')
   };
   const router = useRouter()
 

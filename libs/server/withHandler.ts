@@ -19,10 +19,11 @@ export default function withHandler(
 ) {
   // nextJs가 실행해야 할 함수를 리턴하는 withHandler 함수
   return async function (req: NextApiRequest, res: NextApiResponse):Promise<any>  {
-
-    if(req.method && !methods.includes(req.method as method)){
-      return res.status(405).end()
-    }
+    // console.log("확인 : ", methods.includes("DELETE"||"POST"||"GET"));
+    // if(req.method && !methods.includes(req.method as method)){
+    //   // console.log("methods.includes!!!!!!!!!!!!!!!! : ", methods)
+    //   return res.status(405).end()
+    // }
     if(isPrivate && !req.session.user){
       return res.status(401).json({ok:false, error: "plz log in"})
     }

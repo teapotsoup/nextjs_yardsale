@@ -88,7 +88,7 @@ export default function Layout({
               <span>홈</span>
             </a>
           </Link>
-          <Link href="/community">
+          <Link href="/community/[id]/index">
           <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",

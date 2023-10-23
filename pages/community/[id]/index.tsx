@@ -12,7 +12,8 @@ import { cls } from "@libs/client/utils";
 import client from "@libs/server/client";
 import {GetStaticPaths, GetStaticProps} from "next";
 import Image from "next/image";
-import Spinner from '../../public/Spinner.gif';
+import Spinner from '../../../public/Spinner.gif';
+import Button from "@components/button";
 
 interface AnswerWithUser extends Answer{
   user:User;
@@ -56,7 +57,7 @@ const CommunityPostDetail: NextPage = () => {
   const [wonder, {loading}] = useMutation(`/api/posts/${router.query.id}/wonder`);
 
   const [sendAnswers, {data:answerData,loading:answerLoading}] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/answers`);
-
+  const [deletingPosting,] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/delete`);
   const onWonderClick = () => {
     if (!data) return;
     mutate(
@@ -85,6 +86,13 @@ const CommunityPostDetail: NextPage = () => {
     sendAnswers(form)
   }
 
+  const handleDelete = ()=>{
+    deletingPosting({})
+    if(window.confirm("게시글이 삭제됐습니다")){
+      router.push("/community")
+    }
+  }
+
   useEffect(() => {
     if (answerData && answerData.ok) {
       reset()
@@ -107,22 +115,32 @@ const CommunityPostDetail: NextPage = () => {
         <span className="inline-flex my-3 ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
           동네질문
         </span>
-        <div className="flex mb-3 px-4 cursor-pointer pb-3  border-b items-center space-x-3">
-          <div className="w-10 h-10 rounded-full bg-slate-300" />
-          <div>
-            <p className="text-sm font-medium text-gray-700">
-              {data?.post?.user?.name}
-            </p>
-            <Link href={`users/profiles/${data?.post?.user?.id}`}>
-              <a className="text-xs font-medium text-gray-500">
-                View profile &rarr;
-              </a>
-            </Link>
+        <div className="flex justify-between w-full">
+          <div className="flex mb-3 px-4 cursor-pointer pb-3 items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-slate-300" />
+            <div>
+              <p className="text-sm font-medium text-gray-700">
+                {data?.post?.user?.name}
+              </p>
+              <Link href={`users/profiles/${data?.post?.user?.id}`}>
+                <a className="text-xs font-medium text-gray-500">
+                  View profile &rarr;
+                </a>
+              </Link>
+            </div>
+          </div>
+          <div className="flex">
+            <div className="mr-3">
+              <Button onClick={handleDelete} text={'삭제'}/>
+            </div>
+            <div>
+              <Button text={'수정'}/>
+            </div>
           </div>
         </div>
         <div>
           <div className="mt-2 px-4 text-gray-700">
-            <span className="text-orange-500 font-medium">Q.</span>{" "}
+            <span className="text-orange-500 font-medium">Q.</span>
             {data?.post?.question}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">

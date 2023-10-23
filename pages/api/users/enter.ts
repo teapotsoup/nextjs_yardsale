@@ -24,7 +24,7 @@ async function handler(
             ...user,
           },
           create: {
-            name: "Anonymous",
+            name: email ? email.split('@')[0] : phone,
             ...user,
           },
         },
