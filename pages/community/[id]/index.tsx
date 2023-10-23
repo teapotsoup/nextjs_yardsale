@@ -29,7 +29,7 @@ interface AnswerForm {
 }
 
 
-interface CommunityPostResponse {
+export interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
   isWondering: boolean;
@@ -93,6 +93,10 @@ const CommunityPostDetail: NextPage = () => {
     }
   }
 
+  const handleEdit = ()=>{
+      router.push(`/community/${router.query.id}/edit`)
+  }
+
   useEffect(() => {
     if (answerData && answerData.ok) {
       reset()
@@ -134,7 +138,7 @@ const CommunityPostDetail: NextPage = () => {
               <Button onClick={handleDelete} text={'삭제'}/>
             </div>
             <div>
-              <Button text={'수정'}/>
+              <Button onClick={handleEdit} text={'수정'}/>
             </div>
           </div>
         </div>
@@ -295,7 +299,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
         },
       })
   );
-  console.log("getStaticProps의 post : ", post)
   return {
     props:{
       id,

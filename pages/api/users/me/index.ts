@@ -21,7 +21,6 @@ async function handler(
       ok: true,
       profile,
     });
-
   }
   if (req.method === "POST") {
     const {
