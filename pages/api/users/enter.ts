@@ -1,10 +1,10 @@
-import twilio from "twilio";
+// import twilio from "twilio";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import type { NextApiRequest, NextApiResponse } from "next";
 import smtpTransport from "@libs/server/email";
 
-const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+// const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
 //req.body는 조회불가면 headers를 설정해야한다
 async function handler(
