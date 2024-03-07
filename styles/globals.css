@@ -25,26 +25,16 @@
     animation: flip 2s infinite;
 }
 
-/*.wrapper{*/
-/*    display: block;*/
-/*    width: 100%;*/
-/*    height: auto;*/
-/*}*/
-
 .content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
-    /*display: flex;*/
     width: 100%;
-    /*justify-content: center;*/
+    height: 3vh;
     h3 {
         color: #fff;
         position: absolute;
-        top:50%;
-        left: 50%;
-        /*border: 1px solid red;*/
-        /*bottom: 100%;*/
-        transform: translate(-50%, -130%);
-        /*transform: translate(-50%, -130%);*/
     }
     h3:nth-child(1) {
         color: transparent;
