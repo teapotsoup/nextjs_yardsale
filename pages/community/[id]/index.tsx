@@ -6,7 +6,7 @@ import useSWR, {SWRConfig,unstable_serialize } from "swr";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import {useForm} from "react-hook-form";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import client from "@libs/server/client";
@@ -14,6 +14,7 @@ import {GetStaticPaths, GetStaticProps} from "next";
 import Image from "next/image";
 import Spinner from '../../../public/Spinner.gif';
 import Button from "@components/button";
+import useUser from "@libs/client/useUser";
 
 interface AnswerWithUser extends Answer{
   user:User;
@@ -47,6 +48,7 @@ interface AnswerResponse{
 
 
 const CommunityPostDetail: NextPage = () => {
+  const {user} = useUser()
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<AnswerForm>();
   const { data, mutate  } = useSWR<CommunityPostResponse>(
@@ -56,7 +58,21 @@ const CommunityPostDetail: NextPage = () => {
   const [wonder, {loading}] = useMutation(`/api/posts/${router.query.id}/wonder`);
 
   const [sendAnswers, {data:answerData,loading:answerLoading}] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/answers`);
+
   const [deletingPosting,] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/delete`);
+
+  // 댓글을 지울수 있는 상황
+  // 1. 현재 접속자가 게시글에 들어가서 보는데,
+  //    거기에 자신이 쓴 댓글의 userId와 현재 세션 user와 일치하는 경우 -> 해당 컴포넌트에서
+
+
+  // 2. 현재 접속자가 게시글 작성자일때, 타인이 쓴 댓글을 지우는 경우
+  // `/api/answers/${selectedAnswerId}/delete-answer`
+
+
+  const [selectedAnswerId,setSelectedAnswerId] = useState(0);
+  const [deletingAnswer] = useMutation<AnswerResponse>(`/api/answers/${selectedAnswerId}/delete`);
+
   const onWonderClick = () => {
     if (!data) return;
     mutate(
@@ -92,6 +108,11 @@ const CommunityPostDetail: NextPage = () => {
     }
   }
 
+  const handleAnswerDelete = ()=>{
+    deletingAnswer({})
+     window.alert("댓글이 삭제됐습니다")
+  }
+
   const handleEdit = ()=>{
       router.push(`/community/${router.query.id}/edit`)
   }
@@ -110,7 +131,8 @@ const CommunityPostDetail: NextPage = () => {
         </Layout>
     )
   }
-  console.log(data?.post?.answers)
+
+
   return (
     <Layout canGoBack title={"Post"} seoTitle={"Post"}>
       <div>
@@ -119,7 +141,7 @@ const CommunityPostDetail: NextPage = () => {
         </span>
         <div className="flex justify-between w-full">
           <div className="flex mb-3 px-4 cursor-pointer pb-3 items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-slate-300" />
+            <div className="w-10 h-10 rounded-full bg-slate-300"/>
             <div>
               <p className="text-sm font-medium text-gray-700">
                 {data?.post?.user?.name}
@@ -131,14 +153,17 @@ const CommunityPostDetail: NextPage = () => {
               </Link>
             </div>
           </div>
-          <div className="flex">
+
+          {user?.id === data?.post?.user?.id && (<div className="flex">
             <div className="mr-3">
               <Button onClick={handleDelete} text={'삭제'}/>
             </div>
             <div>
               <Button onClick={handleEdit} text={'수정'}/>
             </div>
-          </div>
+          </div>)}
+
+
         </div>
         <div>
           <div className="mt-2 px-4 text-gray-700">
@@ -187,26 +212,45 @@ const CommunityPostDetail: NextPage = () => {
         </div>
         <div className="px-4 my-5 space-y-5">
           {data?.post?.answers?.map((answer) => (
-            <div key={answer.id} className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-slate-200 rounded-full" />
-              <div>
+              <div key={answer.id} className="flex items-start space-x-3">
+                <div className="w-8 h-8 bg-slate-200 rounded-full"/>
+                <div>
                 <span className="text-sm block font-medium text-gray-700">
                   {answer.user.name}
                 </span>
-                <span className="text-xs text-gray-500 block ">{String(answer?.createdAt)}</span>
-                <p className="text-gray-700 mt-2">
-                 {answer.answer}
-                </p>
+                  <span className="text-xs text-gray-500 block ">{String(answer?.createdAt)}</span>
+                  <p className="text-gray-700 mt-2">
+                    {answer.answer}
+                  </p>
+                </div>
+
+                { Number(answer?.user?.id)  === Number(user?.id) && (<div className="flex">
+                  <div className="mr-3">
+                    <Button onClick={() => {
+                      setSelectedAnswerId(answer.id)
+                      handleAnswerDelete()
+                    }} text={'삭제'}/>
+                  </div>
+                  <div>
+                    <Button onClick={() => {
+                    }} text={'수정'}/>
+                  </div>
+                </div>)}
+                { data?.post?.user?.id  === user?.id && answer?.user?.id  !== user?.id && (<div className="flex">
+                  <div className="mr-3">
+                    <Button onClick={() => handleAnswerDelete()} text={'삭제'}/>
+                  </div>
+                </div>)}
+
               </div>
-            </div>
           ))}
         </div>
         <form className="px-4" onSubmit={handleSubmit(onValid)}>
           <TextArea
-            name="description"
-            placeholder="Answer this question!"
-            required
-            register={register("answer", { required: true, minLength: 5 })}
+              name="description"
+              placeholder="Answer this question!"
+              required
+              register={register("answer", {required: true, minLength: 5})}
           />
           <button className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
             {answerLoading ? "Loading..." : "Reply"}
@@ -218,8 +262,6 @@ const CommunityPostDetail: NextPage = () => {
 };
 
 const Page :NextPage<CommunityPostResponse> = ({id, post,isWondering}) =>{
-
-  console.log("Page의 post : ", post)
   return (
       <SWRConfig
           value={{
