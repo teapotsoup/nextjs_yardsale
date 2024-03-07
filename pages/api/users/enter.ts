@@ -42,30 +42,31 @@ async function handler(
     // console.log(message);
   }
   else if (email) {
-    console.log("메일 진입");
-    const mailOptions = {
-      from: process.env.MAIL_ID,
-      to: email,
-      subject: "Nomad Carrot Authentication Email",
-      text: `Authentication Code : ${payload}`,
-    };
-    await smtpTransport.sendMail(
-      mailOptions,
-      (error, responses) => {
-        if (error) {
-          console.log(error);
-          return null;
-        } else {
-          console.log(responses);
-          return null;
-        }
-      }
-    );
-    smtpTransport.close();
+    // console.log("메일 진입");
+    // const mailOptions = {
+    //   from: process.env.MAIL_ID,
+    //   to: email,
+    //   subject: "Nomad Carrot Authentication Email",
+    //   text: `Authentication Code : ${payload}`,
+    // };
+    // await smtpTransport.sendMail(
+    //   mailOptions,
+    //   (error, responses) => {
+    //     if (error) {
+    //       console.log(error);
+    //       return null;
+    //     } else {
+    //       console.log(responses);
+    //       return null;
+    //     }
+    //   }
+    // );
+    // smtpTransport.close();
     // console.log(result);
   }
   return res.json({
     ok: true,
+    token:payload
   });
 }
 
