@@ -2,11 +2,11 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useRouter } from "next/router";
-import useSWR, {MutatorCallback, SWRConfig, unstable_serialize} from "swr";
+import useSWR, { SWRConfig, unstable_serialize} from "swr";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import {useForm} from "react-hook-form";
-import { useEffect} from "react";
+import {useEffect, useState} from "react";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import client from "@libs/server/client";
@@ -56,16 +56,18 @@ const CommunityPostDetail: NextPage = () => {
 
   const [deletingPosting,] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/delete`);
 
+  const [chatIdEdit, setChatIdEdit] = useState(0);
 
-  const handleAnswerDelete = (id: number) => {
+
+  const handleAnswerDelete = (answerId: number) => {
     axios
-        .get(`/api/answers/${id}/delete`)
+        .get(`/api/answers/${answerId}/delete`)
         .then(res => {
           mutate((data : any) => ({
             ...data,
             post : {
               ...data.post,
-              answers: data.post.answers.filter((answer : AnswerWithUser)  => answer.id !== id),
+              answers: data.post.answers.filter((answer : AnswerWithUser)  => answer.id !== answerId),
             },
           }), false);
           window.alert("댓글이 삭제됐습니다");
@@ -130,10 +132,65 @@ const CommunityPostDetail: NextPage = () => {
   }
 
 
+  interface RenderButtonsProps {
+    isEditing: boolean
+    answerId: number
+    answer:string
+  }
+
+  const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing,answerId,answer}) =>{
+    return (
+        <div className="flex">
+          {isEditing ? (
+              <>
+                <div className="mr-3">
+                  <Button onClick={() => {
+                  }} text={'수정완료'}/>
+                </div>
+                <div>
+                  <Button onClick={() => {
+                    setChatIdEdit(0)
+                  }} text={'수정취소'}/>
+                </div>
+                <form className="px-4" onSubmit={handleSubmit(onValid)}>
+                  <TextArea
+                      name="description"
+                      value={answer}
+                      required
+                      register={register("answer", {required: true, minLength: 5})}
+                  />
+                  <button
+                      className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
+                    {answerLoading ? "Loading..." : "Reply"}
+                  </button>
+                </form>
+              </>
+          ) : (
+              <>
+                <div className="mr-3">
+                  <Button onClick={() => {
+                    handleAnswerDelete(answerId)
+                  }} text={'삭제'}/>
+                </div>
+                <div>
+                  <Button onClick={() => {
+                    setChatIdEdit(answerId)
+                  }} text={'수정'}/>
+                </div>
+              </>
+          )}
+        </div>
+    )
+
+  };
+
+
+  // @ts-ignore
   return (
-    <Layout canGoBack title={"Post"} seoTitle={"Post"}>
-      <div>
-        <span className="inline-flex my-3 ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+      <Layout canGoBack title={"Post"} seoTitle={"Post"}>
+        <div>
+        <span
+            className="inline-flex my-3 ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
           동네질문
         </span>
         <div className="flex justify-between w-full">
@@ -218,15 +275,11 @@ const CommunityPostDetail: NextPage = () => {
                   </p>
                 </div>
 
-                { Number(answer?.user?.id)  === Number(user?.id) && (<div className="flex">
-                  <div className="mr-3">
-                    <Button onClick={() => {handleAnswerDelete(answer?.id)}} text={'삭제'}/>
-                  </div>
-                  <div>
-                    <Button onClick={() => {
-                    }} text={'수정'}/>
-                  </div>
-                </div>)}
+                {/*댓글 작성자가 본인 댓글 삭제 혹은 수정*/}
+                {Number(answer?.user?.id) === Number(user?.id) && (
+                    <RenderButtons  isEditing={chatIdEdit!==0 && chatIdEdit === answer?.id }  answerId={ answer.id}  answer = {answer.answer} />)}
+
+                {/*글 작성자가 다른 사람의 댓글 삭제*/}
                 { data?.post?.user?.id  === user?.id && answer?.user?.id  !== user?.id && (<div className="flex">
                   <div className="mr-3">
                     <Button onClick={() =>{handleAnswerDelete(answer?.id)}} text={'삭제'}/>
