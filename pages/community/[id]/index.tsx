@@ -2,11 +2,11 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useRouter } from "next/router";
-import useSWR, {SWRConfig,unstable_serialize } from "swr";
+import useSWR, {MutatorCallback, SWRConfig, unstable_serialize} from "swr";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import {useForm} from "react-hook-form";
-import {useEffect, useState} from "react";
+import { useEffect} from "react";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import client from "@libs/server/client";
@@ -15,7 +15,7 @@ import Image from "next/image";
 import Spinner from '../../../public/Spinner.gif';
 import Button from "@components/button";
 import useUser from "@libs/client/useUser";
-
+import axios from "axios";
 interface AnswerWithUser extends Answer{
   user:User;
 }
@@ -32,14 +32,10 @@ interface AnswerForm {
 export interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
+  answers:Answer[];
   isWondering: boolean;
   id:any
 }
-
-interface AnswerForm{
-  answer:string;
-}
-
 interface AnswerResponse{
   ok:boolean;
   response:Answer;
@@ -51,27 +47,33 @@ const CommunityPostDetail: NextPage = () => {
   const {user} = useUser()
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<AnswerForm>();
-  const { data, mutate  } = useSWR<CommunityPostResponse>(
+  const { data   , mutate  } = useSWR<CommunityPostResponse>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
-
   const [wonder, {loading}] = useMutation(`/api/posts/${router.query.id}/wonder`);
 
   const [sendAnswers, {data:answerData,loading:answerLoading}] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/answers`);
 
   const [deletingPosting,] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/delete`);
 
-  // 댓글을 지울수 있는 상황
-  // 1. 현재 접속자가 게시글에 들어가서 보는데,
-  //    거기에 자신이 쓴 댓글의 userId와 현재 세션 user와 일치하는 경우 -> 해당 컴포넌트에서
 
-
-  // 2. 현재 접속자가 게시글 작성자일때, 타인이 쓴 댓글을 지우는 경우
-  // `/api/answers/${selectedAnswerId}/delete-answer`
-
-
-  const [selectedAnswerId,setSelectedAnswerId] = useState(0);
-  const [deletingAnswer] = useMutation<AnswerResponse>(`/api/answers/${selectedAnswerId}/delete`);
+  const handleAnswerDelete = (id: number) => {
+    axios
+        .get(`/api/answers/${id}/delete`)
+        .then(res => {
+          mutate((data : any) => ({
+            ...data,
+            post : {
+              ...data.post,
+              answers: data.post.answers.filter((answer : AnswerWithUser)  => answer.id !== id),
+            },
+          }), false);
+          window.alert("댓글이 삭제됐습니다");
+        })
+        .catch(err => {
+          console.log('에러 : ',err);
+        });
+  }
 
   const onWonderClick = () => {
     if (!data) return;
@@ -96,7 +98,7 @@ const CommunityPostDetail: NextPage = () => {
     }
   };
 
-  const onValid = (form:AnswerForm) =>{
+  const onValid = (form:AnswerForm) => {
     if(answerLoading) return 
     sendAnswers(form)
   }
@@ -106,11 +108,6 @@ const CommunityPostDetail: NextPage = () => {
     if(window.confirm("게시글이 삭제됐습니다")){
       router.push("/community")
     }
-  }
-
-  const handleAnswerDelete = ()=>{
-    deletingAnswer({})
-     window.alert("댓글이 삭제됐습니다")
   }
 
   const handleEdit = ()=>{
@@ -127,7 +124,7 @@ const CommunityPostDetail: NextPage = () => {
   if(router.isFallback){ // fallback:true 일경우 빌드 되지 않은 페이지를 빌드 하는 동안 해당 화면을 먼저 보여준다.
     return (
         <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
-          <Image src={Spinner} alt = "spinner"/>
+          <Image src={Spinner} priority={true} alt = "spinner"/>
         </Layout>
     )
   }
@@ -146,14 +143,13 @@ const CommunityPostDetail: NextPage = () => {
               <p className="text-sm font-medium text-gray-700">
                 {data?.post?.user?.name}
               </p>
-              <Link href={`users/profiles/${data?.post?.user?.id}`}>
+              <Link href={user?.id === data?.post?.user?.id ? '/profile' : `/profile/${data?.post?.user?.id}`}>
                 <a className="text-xs font-medium text-gray-500">
                   View profile &rarr;
                 </a>
               </Link>
             </div>
           </div>
-
           {user?.id === data?.post?.user?.id && (<div className="flex">
             <div className="mr-3">
               <Button onClick={handleDelete} text={'삭제'}/>
@@ -162,8 +158,6 @@ const CommunityPostDetail: NextPage = () => {
               <Button onClick={handleEdit} text={'수정'}/>
             </div>
           </div>)}
-
-
         </div>
         <div>
           <div className="mt-2 px-4 text-gray-700">
@@ -226,10 +220,7 @@ const CommunityPostDetail: NextPage = () => {
 
                 { Number(answer?.user?.id)  === Number(user?.id) && (<div className="flex">
                   <div className="mr-3">
-                    <Button onClick={() => {
-                      setSelectedAnswerId(answer.id)
-                      handleAnswerDelete()
-                    }} text={'삭제'}/>
+                    <Button onClick={() => {handleAnswerDelete(answer?.id)}} text={'삭제'}/>
                   </div>
                   <div>
                     <Button onClick={() => {
@@ -238,10 +229,9 @@ const CommunityPostDetail: NextPage = () => {
                 </div>)}
                 { data?.post?.user?.id  === user?.id && answer?.user?.id  !== user?.id && (<div className="flex">
                   <div className="mr-3">
-                    <Button onClick={() => handleAnswerDelete()} text={'삭제'}/>
+                    <Button onClick={() =>{handleAnswerDelete(answer?.id)}} text={'삭제'}/>
                   </div>
                 </div>)}
-
               </div>
           ))}
         </div>
@@ -261,14 +251,15 @@ const CommunityPostDetail: NextPage = () => {
   );
 };
 
-const Page :NextPage<CommunityPostResponse> = ({id, post,isWondering}) =>{
-  return (
+const Page :NextPage<CommunityPostResponse> = ({id, post,answers , isWondering}) =>{
+   return (
       <SWRConfig
           value={{
             fallback: {
               [unstable_serialize(["api", "posts", id])]: {
                 ok: true,
                 post,
+                answers,
                 isWondering,
               },
             },
@@ -278,7 +269,6 @@ const Page :NextPage<CommunityPostResponse> = ({id, post,isWondering}) =>{
       </SWRConfig>
   )
 }
-
 
 export const getStaticPaths : GetStaticPaths = ()=>{
   return{
@@ -328,6 +318,24 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
       }
     }
   })
+
+  const answers =  await client.answer.findMany({
+    where: {
+      postId: Number(ctx?.params?.id),
+    },
+    select:{
+      id:true,
+      answer:true,
+      user:{
+        select:{
+          id:true,
+          name:true,
+          avatar:true,
+        }
+      }
+    },
+  })
+
   const isWondering = Boolean(
       await client.wondering.findFirst({
         where: {
@@ -343,6 +351,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     props:{
       id,
       post : JSON.parse(JSON.stringify(post)),
+      answers:answers,
       isWondering:isWondering,
     },
     revalidate:20 // 빌드하고 설정한 시간이 지나면 이 페이지의 html을 다시 빌드한다.

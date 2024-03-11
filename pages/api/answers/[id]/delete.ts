@@ -21,7 +21,6 @@ async function handler(
         await client.answer.delete({
             where: {
                 id: Number(id),
-                userId: user.id,
             },
         });
         return res.json({ ok: true });
