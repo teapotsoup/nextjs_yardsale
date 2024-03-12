@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Layout from "@components/layout";
 import TextArea from "@components/textarea";
 import { useRouter } from "next/router";
-import useSWR, { SWRConfig, unstable_serialize} from "swr";
+import useSWR, {KeyedMutator, SWRConfig, unstable_serialize} from "swr";
 import { Answer, Post, User } from "@prisma/client";
 import Link from "next/link";
 import {useForm} from "react-hook-form";
@@ -16,10 +16,10 @@ import Spinner from '../../../public/Spinner.gif';
 import Button from "@components/button";
 import useUser from "@libs/client/useUser";
 import axios from "axios";
+
 interface AnswerWithUser extends Answer{
   user:User;
 }
-
 interface PostWithUser extends Post {
   user: User;
   _count: { answers: number; wonderings: number };
@@ -28,7 +28,6 @@ interface PostWithUser extends Post {
 interface AnswerForm {
   answer: string;
 }
-
 export interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
@@ -36,11 +35,94 @@ export interface CommunityPostResponse {
   isWondering: boolean;
   id:any
 }
+
 interface AnswerResponse{
   ok:boolean;
   response:Answer;
 }
 
+interface RenderButtonsProps {
+  isEditing: boolean
+  answerId: number
+  answer:string
+  setChatIdEdit : React.Dispatch<React.SetStateAction<number>>
+  mutate :  KeyedMutator<CommunityPostResponse>
+  handleAnswerDelete : Function
+}
+
+interface WriteForm {
+  answer:string
+}
+
+const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing, answerId,answer, setChatIdEdit,mutate,handleAnswerDelete}) =>{
+
+  const {register, handleSubmit,setValue} = useForm<WriteForm>()
+
+  useEffect(()=>{
+    if(answer)   setValue('answer',answer )},[answer, setValue]
+  )
+  const handleAnswerEdit = (answerId: number, answer: string) => {
+    axios
+        .patch(`/api/answers/${answerId}/edit`,{answer})
+        .then(res => {
+          mutate( (data:any) => ({
+            ...data,
+            post : {
+              ...data.post,
+              answers: data.post.answers.map((item:Answer) =>
+                  item.id === answerId ? { ...item, answer } : item
+              ),
+            },
+          }), false);
+        })
+        .catch(err => {
+          console.log('에러 : ',err);
+        });
+  }
+
+  const onValid = (data:WriteForm)=>{
+    handleAnswerEdit(answerId,data.answer)
+    setChatIdEdit(0)
+  }
+
+  return (
+      <div className="flex">
+        {isEditing ? (
+            <>
+              <div className="mr-3">
+                <Button onClick={() => {
+                  setChatIdEdit(0)
+                }} text={'수정취소'}/>
+              </div>
+              <form className="px-4" onSubmit={handleSubmit(onValid)}>
+                <TextArea
+                    name="description"
+                    required
+                    register={register("answer", {required: true, minLength: 5})}
+                />
+                <button
+                    className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
+                  {"수정완료"}
+                </button>
+              </form>
+            </>
+        ) : (
+            <>
+              <div className="mr-3">
+                <Button onClick={() => {
+                  handleAnswerDelete(answerId)
+                }} text={'삭제'}/>
+              </div>
+              <div>
+                <Button onClick={() => {
+                  setChatIdEdit(answerId)
+                }} text={'수정'}/>
+              </div>
+            </>
+        )}
+      </div>
+  )
+};
 
 
 const CommunityPostDetail: NextPage = () => {
@@ -57,25 +139,6 @@ const CommunityPostDetail: NextPage = () => {
   const [deletingPosting,] = useMutation<AnswerResponse>(`/api/posts/${router.query.id}/delete`);
 
   const [chatIdEdit, setChatIdEdit] = useState(0);
-
-
-  const handleAnswerDelete = (answerId: number) => {
-    axios
-        .get(`/api/answers/${answerId}/delete`)
-        .then(res => {
-          mutate((data : any) => ({
-            ...data,
-            post : {
-              ...data.post,
-              answers: data.post.answers.filter((answer : AnswerWithUser)  => answer.id !== answerId),
-            },
-          }), false);
-          window.alert("댓글이 삭제됐습니다");
-        })
-        .catch(err => {
-          console.log('에러 : ',err);
-        });
-  }
 
   const onWonderClick = () => {
     if (!data) return;
@@ -105,7 +168,7 @@ const CommunityPostDetail: NextPage = () => {
     sendAnswers(form)
   }
 
-  const handleDelete = ()=>{
+  const handleDelete = ()=> {
     deletingPosting({})
     if(window.confirm("게시글이 삭제됐습니다")){
       router.push("/community")
@@ -123,6 +186,25 @@ const CommunityPostDetail: NextPage = () => {
     }
   }, [answerData,reset,mutate]);
 
+
+  const handleAnswerDelete = (answerId: number) => {
+    axios
+        .get(`/api/answers/${answerId}/delete`)
+        .then(res => {
+          mutate((data : any) => ({
+            ...data,
+            post : {
+              ...data.post,
+              answers: data.post.answers.filter((answer : AnswerWithUser)  => answer.id !== answerId),
+            },
+          }), false);
+          window.alert("댓글이 삭제됐습니다");
+        })
+        .catch(err => {
+          console.log('에러 : ',err);
+        });
+  }
+
   if(router.isFallback){ // fallback:true 일경우 빌드 되지 않은 페이지를 빌드 하는 동안 해당 화면을 먼저 보여준다.
     return (
         <Layout canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
@@ -130,87 +212,6 @@ const CommunityPostDetail: NextPage = () => {
         </Layout>
     )
   }
-
-
-  interface RenderButtonsProps {
-    isEditing: boolean
-    answerId: number
-    answer:string
-  }
-
-  const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing,answerId,answer}) =>{
-
-    const {register, handleSubmit,setValue} = useForm<WriteForm>()
-
-    type WriteForm ={
-      answer:string
-    }
-
-    useEffect(()=>{
-      if(answer)   setValue('answer',answer )},[answer, setValue])
-    
-    const handleAnswerEdit = (answerId: number, answer: string) => {
-      axios
-          .patch(`/api/answers/${answerId}/edit`,{answer})
-          .then(res => {
-            mutate( (data:any) => ({
-              ...data,
-              post : {
-                ...data.post,
-                answers: data.post.answers.map((item:Answer) =>
-                    item.id === answerId ? { ...item, answer } : item
-                ),
-              },
-            }), false);
-          })
-          .catch(err => {
-            console.log('에러 : ',err);
-          });
-    }
-    const onValid = (data:WriteForm)=>{
-      handleAnswerEdit(answerId,data.answer)
-      setChatIdEdit(0)
-    }
-
-    return (
-        <div className="flex">
-          {isEditing ? (
-              <>
-                <div className="mr-3">
-                  <Button onClick={() => {
-                    setChatIdEdit(0)
-                  }} text={'수정취소'}/>
-                </div>
-                <form className="px-4" onSubmit={handleSubmit(onValid)}>
-                  <TextArea
-                      name="description"
-                      required
-                      register={register("answer", {required: true, minLength: 5})}
-                  />
-                  <button
-                      className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
-                    {"수정완료"}
-                  </button>
-                </form>
-              </>
-          ) : (
-              <>
-                <div className="mr-3">
-                  <Button onClick={() => {
-                    handleAnswerDelete(answerId)
-                  }} text={'삭제'}/>
-                </div>
-                <div>
-                  <Button onClick={() => {
-                    setChatIdEdit(answerId)
-                  }} text={'수정'}/>
-                </div>
-              </>
-          )}
-        </div>
-    )
-
-  };
 
   // @ts-ignore
   return (
@@ -304,7 +305,7 @@ const CommunityPostDetail: NextPage = () => {
 
                 {/*댓글 작성자가 본인 댓글 삭제 혹은 수정*/}
                 {Number(answer?.user?.id) === Number(user?.id) && (
-                    <RenderButtons  isEditing={chatIdEdit!==0 && chatIdEdit === answer?.id }  answerId={ answer.id}  answer = {answer.answer} />)}
+                    <RenderButtons  isEditing={chatIdEdit!==0 && chatIdEdit === answer?.id }    answerId={ answer.id}  answer = {answer.answer} mutate = {mutate}  setChatIdEdit={setChatIdEdit} handleAnswerDelete={handleAnswerDelete}/>)}
 
                 {/*글 작성자가 다른 사람의 댓글 삭제*/}
                 { data?.post?.user?.id  === user?.id && answer?.user?.id  !== user?.id && (<div className="flex">
