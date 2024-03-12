@@ -139,15 +139,44 @@ const CommunityPostDetail: NextPage = () => {
   }
 
   const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing,answerId,answer}) =>{
+
+    const {register, handleSubmit,setValue} = useForm<WriteForm>()
+
+    type WriteForm ={
+      answer:string
+    }
+
+    useEffect(()=>{
+      if(answer)   setValue('answer',answer )},[answer, setValue])
+    
+    const handleAnswerEdit = (answerId: number, answer: string) => {
+      axios
+          .patch(`/api/answers/${answerId}/edit`,{answer})
+          .then(res => {
+            mutate( (data:any) => ({
+              ...data,
+              post : {
+                ...data.post,
+                answers: data.post.answers.map((item:Answer) =>
+                    item.id === answerId ? { ...item, answer } : item
+                ),
+              },
+            }), false);
+          })
+          .catch(err => {
+            console.log('에러 : ',err);
+          });
+    }
+    const onValid = (data:WriteForm)=>{
+      handleAnswerEdit(answerId,data.answer)
+      setChatIdEdit(0)
+    }
+
     return (
         <div className="flex">
           {isEditing ? (
               <>
                 <div className="mr-3">
-                  <Button onClick={() => {
-                  }} text={'수정완료'}/>
-                </div>
-                <div>
                   <Button onClick={() => {
                     setChatIdEdit(0)
                   }} text={'수정취소'}/>
@@ -155,13 +184,12 @@ const CommunityPostDetail: NextPage = () => {
                 <form className="px-4" onSubmit={handleSubmit(onValid)}>
                   <TextArea
                       name="description"
-                      value={answer}
                       required
                       register={register("answer", {required: true, minLength: 5})}
                   />
                   <button
                       className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
-                    {answerLoading ? "Loading..." : "Reply"}
+                    {"수정완료"}
                   </button>
                 </form>
               </>
@@ -183,7 +211,6 @@ const CommunityPostDetail: NextPage = () => {
     )
 
   };
-
 
   // @ts-ignore
   return (

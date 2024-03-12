@@ -9,20 +9,20 @@ async function handler(
 ) {
         const {
             query:{id},
-            body:{editanswer}
+            body:{answer}
         } =req;
         const  updateQuestion = await client.answer.update({
                 where:{
                     id:Number(id)
                 },
                 data:{
-                    answer: String(editanswer)
+                    answer
                 }
             }
         )
         try {
             await res.revalidate(`/community/${id}`)
-            return res.json({ ok: true, question: updateQuestion });
+            return res.json({ ok: true, answer: updateQuestion });
         } catch (err) {
             return res.status(500);
         }
