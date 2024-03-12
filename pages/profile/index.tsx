@@ -48,9 +48,9 @@ const MiniProfile = () => {
                     <div className="w-16 h-16 bg-slate-500 rounded-full" />
                 )}
                 <div className="flex flex-col">
-                    <span className="font-medium text-gray-900">{user?.name}</span>
+                    <span className="font-medium text-white">{user?.name}</span>
                     <Link href="/profile/edit">
-                        <a className="text-sm text-gray-700">Edit profile &rarr;</a>
+                        <a className="text-sm text-white">Edit profile &rarr;</a>
                     </Link>
                 </div>
             </div>
@@ -94,20 +94,20 @@ const Reviews = () =>{
                         </div>
                     </div>
                 </div>
-                <div className="mt-4 text-gray-600 text-sm">
+                <div className="mt-4 text-white text-sm">
                     <p>
                         {review.review}
                     </p>
                 </div>
             </div>
-        ))): (<div className="mt-12">리뷰가 없습니다</div>)}
+        ))): (<div className="mt-12 text-white">리뷰가 없습니다</div>)}
     </>)
 }
 
 
 const Profile: NextPage= () => {
   return (
-    <Layout hasTabBar  seoTitle={'Profile'}>
+    <Layout hasTabBar title={'Profile'}  seoTitle={'Profile'}>
 <div className="py-10 px-4">
     <Suspense fallback="Loading Mini Profile">
         <MiniProfile />
@@ -115,7 +115,7 @@ const Profile: NextPage= () => {
       <div className="mt-10 flex justify-around">
       <Link href="/profile/sold">
             <a className="flex flex-col items-center">
-              <div className="w-14 h-14 text-white bg-orange-400 rounded-full flex items-center justify-center">
+              <div className="w-14 h-14 text-white bg-blue-400 rounded-full flex items-center justify-center">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -131,14 +131,14 @@ const Profile: NextPage= () => {
                   ></path>
                 </svg>
               </div>
-              <span className="text-sm mt-2 font-medium text-gray-700">
+              <span className="text-sm mt-2 font-medium text-white">
                 판매완료
               </span>
             </a>
           </Link>
           <Link href="/profile/bought">
             <a className="flex flex-col items-center">
-              <div className="w-14 h-14 text-white bg-orange-400 rounded-full flex items-center justify-center">
+              <div className="w-14 h-14 text-white bg-blue-400 rounded-full flex items-center justify-center">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -154,14 +154,14 @@ const Profile: NextPage= () => {
                   ></path>
                 </svg>
               </div>
-              <span className="text-sm mt-2 font-medium text-gray-700">
+              <span className="text-sm mt-2 font-medium text-white">
                 구매완료
               </span>
             </a>
           </Link>
           <Link href="/profile/loved">
             <a className="flex flex-col items-center">
-              <div className="w-14 h-14 text-white bg-orange-400 rounded-full flex items-center justify-center">
+              <div className="w-14 h-14 text-white bg-blue-400 rounded-full flex items-center justify-center">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -177,7 +177,7 @@ const Profile: NextPage= () => {
                   ></path>
                 </svg>
               </div>
-              <span className="text-sm mt-2 font-medium text-gray-700">
+              <span className="text-sm mt-2 font-medium text-white">
                 관심목록
               </span>
             </a>

@@ -23,13 +23,13 @@ const Streams: NextPage = () => {
     },[data])
 
   return (
-    <Layout  hasTabBar>
+    <Layout  hasTabBar title={'Streaming'} seoTitle={'Streaming'}>
       <div className="py-10 divide-y-[1px] space-y-4">
         {limitData?.streams?.map((stream) => (
             <Link key={stream.id} href={`/streams/${stream.id}`}>
             <a className="pt-4 block  px-4">
               <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
-                <h3 className='mt-2 text-lg  text-gray-700'>{stream.id}</h3>
+                <h3 className='mt-2 text-lg  text-white'>{stream.id}</h3>
             </a>
           </Link>
         ))}

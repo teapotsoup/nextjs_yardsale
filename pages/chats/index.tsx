@@ -24,7 +24,7 @@ const Chats: NextPage = () => {
   const { data } = useSWR<ChatroomResponse>('/api/chats');
 
   return (
-    <Layout hasTabBar  >
+    <Layout hasTabBar  title={'Chats'}  seoTitle={'Chats'}>
     <div className="py-10 divide-y-[1px] ">
       {data?.chatrooms?.map((chatroom, i) => (
           <Link href={`/chats/${chatroom.id}`} key={chatroom.id}>
@@ -32,13 +32,13 @@ const Chats: NextPage = () => {
                 <div className="flex justify-between w-full">
                   <div className="w-12 h-12 rounded-full bg-slate-300" />
                   <div>
-                    <p className="text-gray-700">{user?.id === chatroom?.buyer?.id ?  chatroom?.seller?.name : chatroom?.buyer?.name}</p>
-                    <p className="text-sm  text-gray-500">
+                    <p className="text-white">{user?.id === chatroom?.buyer?.id ?  chatroom?.seller?.name : chatroom?.buyer?.name}</p>
+                    <p className="text-sm  text-white">
                       See you tomorrow in the corner at 2pm!
                     </p>
                   </div>
                   <div className="flex items-center">
-                    <p className="text-gray-700">{chatroom?.product?.name}</p>
+                    <p className="text-white">{chatroom?.product?.name}</p>
                   </div>
                 </div>
               </a>

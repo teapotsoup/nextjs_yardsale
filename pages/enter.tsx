@@ -98,15 +98,21 @@ const Enter: NextPage = () => {
           ) : (
               <>
                 <div className="flex flex-col items-center">
-                  <h5 className="text-sm text-gray-500 font-medium">
-                    Enter using:
-                  </h5>
+
+
+                  <TextAnimation1 text={`LOGIN`} size={'text-sm'}/>
+
+                  {data && <div className="mt-6 ">
+                    <TextAnimation1 text={`token_no:${data?.token}`} size={'text-sm'}/>
+                  </div>}
+
+
                   <div className="grid border-b  w-full mt-8 grid-cols-2 ">
                     <button
                         className={cls(
                             "pb-4 font-medium text-sm border-b-2",
                             method === "email"
-                                ? " border-orange-500 text-orange-400"
+                                ? " border-blue-500 text-blue-400"
                                 : "border-transparent hover:text-gray-400 text-gray-500"
                         )}
                         onClick={onEmailClick}
@@ -117,7 +123,7 @@ const Enter: NextPage = () => {
                         className={cls(
                             "pb-4 font-medium text-sm border-b-2",
                             method === "phone"
-                                ? " border-orange-500 text-orange-400"
+                                ? " border-blue-500 text-blue-400"
                                 : "border-transparent hover:text-gray-400 text-gray-500"
                         )}
                         onClick={onPhoneClick}
@@ -175,7 +181,7 @@ const Enter: NextPage = () => {
             <div className="relative">
               <div className="absolute w-full border-t border-gray-300"/>
               <div className="relative -top-3 text-center ">
-              <span className="bg-white px-2 text-sm text-gray-500">
+              <span className="bg-gray-900 px-2 text-sm text-white ">
                 Or enter with
               </span>
 

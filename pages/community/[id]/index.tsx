@@ -20,14 +20,17 @@ import axios from "axios";
 interface AnswerWithUser extends Answer{
   user:User;
 }
+
 interface PostWithUser extends Post {
   user: User;
   _count: { answers: number; wonderings: number };
   answers: AnswerWithUser[];
 }
+
 interface AnswerForm {
   answer: string;
 }
+
 export interface CommunityPostResponse {
   ok: boolean;
   post: PostWithUser;
@@ -101,7 +104,7 @@ const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing, answerId,answe
                     register={register("answer", {required: true, minLength: 5})}
                 />
                 <button
-                    className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
+                    className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:outline-none ">
                   {"수정완료"}
                 </button>
               </form>
@@ -225,11 +228,11 @@ const CommunityPostDetail: NextPage = () => {
           <div className="flex mb-3 px-4 cursor-pointer pb-3 items-center space-x-3">
             <div className="w-10 h-10 rounded-full bg-slate-300"/>
             <div>
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-white">
                 {data?.post?.user?.name}
               </p>
               <Link href={user?.id === data?.post?.user?.id ? '/profile' : `/profile/${data?.post?.user?.id}`}>
-                <a className="text-xs font-medium text-gray-500">
+                <a className="text-xs font-medium text-white">
                   View profile &rarr;
                 </a>
               </Link>
@@ -245,11 +248,11 @@ const CommunityPostDetail: NextPage = () => {
           </div>)}
         </div>
         <div>
-          <div className="mt-2 px-4 text-gray-700">
-            <span className="text-orange-500 font-medium">Q.</span>
+          <div className="mt-2 px-4 text-white">
+            <span className="text-blue-500 font-medium">Q.</span>
             {data?.post?.question}
           </div>
-          <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">
+          <div className="flex px-4 space-x-5 mt-3 text-white py-2.5 border-t border-b-[2px]  w-full">
             <button onClick={onWonderClick} className={cls(
                 "flex space-x-2 items-center text-sm",
                 data?.isWondering ? "text-teal-600" : ""
@@ -294,11 +297,11 @@ const CommunityPostDetail: NextPage = () => {
               <div key={answer.id} className="flex items-start space-x-3">
                 <div className="w-8 h-8 bg-slate-200 rounded-full"/>
                 <div>
-                <span className="text-sm block font-medium text-gray-700">
+                <span className="text-sm block font-medium text-white">
                   {answer.user.name}
                 </span>
-                  <span className="text-xs text-gray-500 block ">{String(answer?.createdAt)}</span>
-                  <p className="text-gray-700 mt-2">
+                  <span className="text-xs text-white block ">{String(answer?.createdAt)}</span>
+                  <p className="text-white mt-2">
                     {answer.answer}
                   </p>
                 </div>
@@ -323,7 +326,7 @@ const CommunityPostDetail: NextPage = () => {
               required
               register={register("answer", {required: true, minLength: 5})}
           />
-          <button className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
+          <button className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:outline-none ">
             {answerLoading ? "Loading..." : "Reply"}
           </button>
         </form>

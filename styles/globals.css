@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/*a 태그에 전역 적용*/
+@layer base {
+    a{
+        @apply text-blue-500 hover:underline
+        underline-offset-2
+    }
+}
+
 
 .blog-post-content h1 {
     @apply text-red-500 mb-5;
@@ -39,13 +47,13 @@
     position: absolute;
 }
 
-.content h3:first-child {
-    color: transparent;
-    -webkit-text-stroke: 1px #f97316;
+.content h2:first-child {
+    color: white;
+    -webkit-text-stroke: 1px #3b82f6;
 }
 
-.content h3:last-child {
-    color: #f97316;
+.content h2:last-child {
+    color: #3b82f6;
     animation: animate 4s ease-in-out infinite;
 }
 

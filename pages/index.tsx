@@ -19,7 +19,7 @@ type ProductsResponse={
 const Home: NextPage = () => {
     const {data} = useSWR<ProductsResponse>("/api/products")
     return (
-        <Layout hasTabBar title="홈" seoTitle={'Home'}>
+        <Layout hasTabBar title="YARD SALE" seoTitle={'Home'}>
             <Head>
                 <title>Home</title>
             </Head>

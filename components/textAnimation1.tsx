@@ -12,7 +12,7 @@ export default  function TextAnimation1({text,size}:TextAnimation1) {
                     text?.split('').map((syl:string,idx:number)=>{
                         return (
                             <span key={idx} style={{animationDelay: `0.${idx}s`}}
-                                  className="inline-block text-black animate-flip">{syl}</span>
+                                  className="inline-block text-white animate-flip">{syl}</span>
                         )
                     })
                 }

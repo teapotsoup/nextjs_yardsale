@@ -22,23 +22,23 @@ interface PostsResponse {
 const Community: NextPage<PostsResponse> = ({ posts }) => {
 
   return (
-    <Layout hasTabBar seoTitle={'동네생활'} >
+    <Layout hasTabBar title="동네 생활"  seoTitle={'동네생활'} >
       <div className="space-y-4 divide-y-[2px]">
         {posts?.map((post) => (
           <Link key={post?.id} href={`/community/${post?.id}`}>
             <a className="flex cursor-pointer flex-col pt-4 items-start">
-              <span className="flex ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              <span className="flex ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500 text-white">
                 동네질문
               </span>
-              <div className="mt-2 px-4 text-gray-700">
-                <span className="text-orange-500 font-medium">Q.</span> 
+              <div className="mt-2 px-4 text-white">
+                <span className="text-blue-500 font-medium">Q.</span>
                 {post?.question}
               </div>
-              <div className="mt-5 px-4 flex items-center justify-between w-full text-gray-500 font-medium text-xs">
+              <div className="mt-5 px-4 flex items-center justify-between w-full text-white font-medium text-xs">
                 <span>{post.user.name}</span>
                 <span>{String(post.createdAt)}</span>
               </div>
-              <div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t   w-full">
+              <div className="flex px-4 space-x-5 mt-3 text-white py-2.5 border-t   w-full">
                 <span className="flex space-x-2 items-center text-sm">
                   <svg
                     className="w-4 h-4"

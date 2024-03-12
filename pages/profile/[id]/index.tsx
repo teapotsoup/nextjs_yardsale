@@ -79,7 +79,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                     </div>
                     </div>
                     </div>
-                    <div className="mt-4 text-gray-600 text-sm">
+                    <div className="mt-4 text-white text-sm">
                     <p>
                 {review.review}
                     </p>

@@ -79,24 +79,24 @@ const ItemDetail: NextPage = () => {
             <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
               <div className="w-12 h-12 rounded-full bg-slate-300" />
               <div>
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-white">
                   {data?.product?.user?.name}
                 </p>
                 <Link href={sessionUser?.id === data?.product?.user?.id ? `/profile`  : `/profile/${data?.product?.user?.id}`}>
-                  <a className="text-xs font font-medium text-gray-500">
+                  <a className="text-xs font font-medium text-white">
                     View profile &rarr;
                   </a>
                 </Link>
               </div>
             </div>
             <div className="mt-5">
-              <h1 className="text-3xl font-bold text-gray-800">
+              <h1 className="text-3xl font-bold text-white">
                 {data?.product?.name}
               </h1>
-              <p className="text-3xl block mt-3 text-gray-900">
+              <p className="text-3xl block mt-3 text-white">
                 ${data?.product?.price}
               </p>
-              <p className="text-base my-6 text-gray-700">
+              <p className="text-base my-6 text-white">
                 {data?.product?.description}
               </p>
               {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
@@ -105,8 +105,8 @@ const ItemDetail: NextPage = () => {
                     onClick={onFavClick}
                     className={
                       cls(
-                          "p-3 rounded-md flex items-center  hover:bg-gray-100 justify-center",
-                          data?.isLiked ? "hover:text-red-500 text-red-400":" hover:text-gray-500 text-gray-400"
+                          "p-3 rounded-md flex items-center  hover:bg-blue-500 justify-center",
+                          data?.isLiked ? "hover:text-red-500 text-red-400":" hover:text-white text-white"
                       )
                     }
                 >
@@ -150,16 +150,16 @@ const ItemDetail: NextPage = () => {
         </div>
         <div>
           {data ?  (<>
-            <h2 className="text-2xl font-bold text-gray-800">Similar items</h2>
+            <h2 className="text-2xl font-bold text-white">Similar items</h2>
             <div className=" mt-6 grid grid-cols-2 gap-4">
               {data?.relatedProducts.map((product) => (
                   <div key={product.id}>
                     <div className="h-56 w-full mb-4 bg-slate-300" />
                     <div className="text-center">
                       <Link href={`/products/${product.id}`}>
-                        <h3 className="text-gray-700 -mb-1">{product.name}</h3>
+                        <h3 className="text-white -mb-1">{product.name}</h3>
                       </Link>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-white">
                     {product.price}
                   </span>
                     </div>

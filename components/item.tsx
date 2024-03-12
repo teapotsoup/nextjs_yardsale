@@ -16,12 +16,12 @@ export default function Item({ title, price, hearts, id }: ItemProps) {
         <div className="flex space-x-4">
         <div className="w-20 h-20 bg-gray-400 rounded-md" />
           <div className="pt-2 flex flex-col">
-            <h3 className="text-sm font-medium text-gray-900">{title}</h3>
-            <span className="font-medium mt-1 text-gray-900">${price}</span>
+            <h3 className="text-sm font-medium text-white">{title}</h3>
+            <span className="font-medium mt-1 text-white">${price}</span>
           </div>
         </div>
         <div className="flex space-x-2 items-end justify-end">
-          <div className="flex space-x-0.5 items-center text-sm  text-gray-600">
+          <div className="flex space-x-0.5 items-center text-sm  text-white">
           <svg
               className="w-4 h-4"
               fill={hearts > 0 ? "#EF5350"  : "#ADAEB3" }
