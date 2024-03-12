@@ -1,14 +1,31 @@
 import Image from "next/image";
 import Link from "next/link";
+import Button from "@components/button";
+import useUser from "@libs/client/useUser";
+import useMutation from "@libs/client/useMutation";
 
 interface ItemProps {
   title: string;
   id: number;
   price: number;
   hearts: number;
+  userId:number;
 }
 
-export default function Item({ title, price, hearts, id }: ItemProps) {
+interface ProductResponse{
+  ok:boolean;
+}
+
+export default function Item({ title, price, hearts, id, userId }: ItemProps) {
+  const { user } = useUser();
+
+
+  const [deletingProduct,] = useMutation<ProductResponse>(`/api/products/${id}/delete`);
+  const handleDelete = ()=> {
+    if(window.confirm("상품을 삭제하시겠습니까?")){
+      deletingProduct({})
+    }
+  }
 
   return (
     <Link href={`/products/${id}`}>
@@ -18,6 +35,13 @@ export default function Item({ title, price, hearts, id }: ItemProps) {
           <div className="pt-2 flex flex-col">
             <h3 className="text-sm font-medium text-white">{title}</h3>
             <span className="font-medium mt-1 text-white">${price}</span>
+            {
+              user?.id === userId && (<div className="flex">
+                  <Button className="mr-3" text="수정" onClick={() => {
+                  }}/>
+                  <Button text="삭제" onClick={handleDelete}/>
+                </div>)
+            }
           </div>
         </div>
         <div className="flex space-x-2 items-end justify-end">

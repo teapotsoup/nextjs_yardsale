@@ -32,6 +32,7 @@ const Home: NextPage = () => {
                             title={product.name}
                             price={product.price}
                             hearts={product._count?.records || 0}
+                            userId = {product.userId}
                         />
                     ))
                     : "Loading..."}

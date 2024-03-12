@@ -28,12 +28,12 @@ const Profile: NextPage<ProfileResponse> = () => {
                 <div className="flex items-center space-x-3">
                     <div className="w-16 h-16 bg-slate-500 rounded-full" />
                     <div className="flex flex-col">
-                        <span className="font-medium text-gray-900">{data?.profile?.name}</span>
-                        <span className="font-medium text-gray-900">{"가입일자 : " + String(data?.profile?.createdAt).split('T')[0] }</span>
+                        <span className="font-medium text-white">{data?.profile?.name}</span>
+                        <span className="font-medium text-white">{"가입일자 : " + String(data?.profile?.createdAt).split('T')[0] }</span>
                     </div>
                 </div>
                 <div className="pt-5">
-                    <span className="font-bold text-gray-900">판매 중</span>
+                    <span className="font-bold text-white">판매 중</span>
                     <hr className="h-px my-2 bg-gray-700 border-0"/>
                 </div>
 
@@ -49,7 +49,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                     )))
                     :<div>판매하는 상품이 없습니다</div>}
                 <div className="pt-6">
-                    <span className="font-bold text-gray-900">판매자 리뷰</span>
+                    <span className="font-bold text-white">판매자 리뷰</span>
                     <hr className="h-px my-2 bg-gray-700 border-0"/>
                 </div>
                 {data?.profile?.receivedReviews?.length! > 0 ?
@@ -86,7 +86,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                     </div>
                     </div>
                     )))
-                    :<div>리뷰가 없습니다</div>}
+                    :<div className="text-white">리뷰가 없습니다</div>}
 
             </div>
         </Layout>

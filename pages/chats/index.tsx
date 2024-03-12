@@ -22,7 +22,8 @@ type ChatroomResponse = {
 const Chats: NextPage = () => {
   const {user} = useUser();
   const { data } = useSWR<ChatroomResponse>('/api/chats');
-
+    console.log(data?.chatrooms)
+// {chatroom?.chatMessages[chatroom?.chatMessages?.length-1]?.message}
   return (
     <Layout hasTabBar  title={'Chats'}  seoTitle={'Chats'}>
     <div className="py-10 divide-y-[1px] ">
@@ -34,7 +35,7 @@ const Chats: NextPage = () => {
                   <div>
                     <p className="text-white">{user?.id === chatroom?.buyer?.id ?  chatroom?.seller?.name : chatroom?.buyer?.name}</p>
                     <p className="text-sm  text-white">
-                      See you tomorrow in the corner at 2pm!
+                      {chatroom?.chatMessages[0]?.message}
                     </p>
                   </div>
                   <div className="flex items-center">

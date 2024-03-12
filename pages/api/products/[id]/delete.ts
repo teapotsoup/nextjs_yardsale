@@ -11,7 +11,7 @@ async function handler(
     const {
         query:{id},
     } =req;
-    const deletedPost = await client.post.delete({
+    const deletedProduct = await client.product.delete({
         where: {
             id: Number(id),
         },
