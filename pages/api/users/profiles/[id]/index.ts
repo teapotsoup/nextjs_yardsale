@@ -22,6 +22,7 @@ async function handler(
                             records:{ where: { kind: 'Fav' } },
                             price:true,
                             name:true,
+                            userId:true
                         }
                     }
                 }

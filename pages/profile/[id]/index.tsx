@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Layout from "@components/layout";
-import useUser from "@libs/client/useUser";
 import useSWR from "swr";
 import { Review,User,Product } from "@prisma/client";
 import {useRouter} from "next/router";
@@ -21,7 +20,6 @@ interface ProfileResponse {
 const Profile: NextPage<ProfileResponse> = () => {
     const router = useRouter();
     const {data} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
-
     return (
         <Layout canGoBack>
             <div className="py-10 px-4">
@@ -45,6 +43,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                             title={product.name}
                             price={product.price}
                             hearts={product.records.length}
+                            userId={product.userId}
                         />
                     )))
                     :<div>판매하는 상품이 없습니다</div>}

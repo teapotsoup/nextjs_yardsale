@@ -22,7 +22,7 @@ interface PostsResponse {
 const Community: NextPage<PostsResponse> = ({ posts }) => {
 
   return (
-    <Layout hasTabBar title="동네 생활"  seoTitle={'동네생활'} >
+    <Layout hasTabBar title="자유 게시판"  seoTitle={'자유 게시판'} >
       <div className="space-y-4 divide-y-[2px]">
         {posts?.map((post) => (
           <Link key={post?.id} href={`/community/${post?.id}`}>

@@ -67,7 +67,7 @@ const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing, answerId,answe
   const handleAnswerEdit = (answerId: number, answer: string) => {
     axios
         .patch(`/api/answers/${answerId}/edit`,{answer})
-        .then(res => {
+        .then(() => {
           mutate( (data:any) => ({
             ...data,
             post : {
@@ -193,7 +193,7 @@ const CommunityPostDetail: NextPage = () => {
   const handleAnswerDelete = (answerId: number) => {
     axios
         .get(`/api/answers/${answerId}/delete`)
-        .then(res => {
+        .then(() => {
           mutate((data : any) => ({
             ...data,
             post : {
@@ -249,7 +249,6 @@ const CommunityPostDetail: NextPage = () => {
         </div>
         <div>
           <div className="mt-2 px-4 text-white">
-            <span className="text-blue-500 font-medium">Q.</span>
             {data?.post?.question}
           </div>
           <div className="flex px-4 space-x-5 mt-3 text-white py-2.5 border-t border-b-[2px]  w-full">
