@@ -66,7 +66,7 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
                           <Button    text="수정" onClick={()=>handleEdit(id)}/>
                       </div>
                       <div className="w-100">
-                          <Button text="삭제" onClick={()=>handleDelete}/>
+                          <Button text="삭제" onClick={()=>handleDelete()}/>
 
                       </div>
                   </div>
