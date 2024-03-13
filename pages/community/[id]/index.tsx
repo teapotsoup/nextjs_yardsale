@@ -99,7 +99,7 @@ const RenderButtons : React.FC<RenderButtonsProps> = ({isEditing, answerId,answe
               </div>
               <form className="px-4" onSubmit={handleSubmit(onValid)}>
                 <TextArea
-                    name="description"
+                    name="answer"
                     required
                     register={register("answer", {required: true, minLength: 5})}
                 />

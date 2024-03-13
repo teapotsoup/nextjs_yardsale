@@ -2,14 +2,13 @@ import type {GetStaticPaths, GetStaticProps, NextPage} from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
 import { useRouter } from "next/router";
-import useSWR, {SWRConfig, unstable_serialize, useSWRConfig} from "swr";
+import useSWR, {SWRConfig, unstable_serialize, } from "swr";
 import Link from "next/link";
 import { Product, User } from "@prisma/client";
-import products from "pages/api/products";
 import useMutation from "@libs/client/useMutation";
 import { cls } from "@libs/client/utils";
 import useUser from "@libs/client/useUser";
-import Spinner from '../../public/Spinner.gif';
+import Spinner from '../../../public/Spinner.gif';
 import Image from "next/image";
 import {useEffect} from "react";
 import client from "@libs/server/client";
@@ -19,13 +18,13 @@ interface ProductWithUser extends Product {
   _count:any
 }
 
-interface ItemDetailResponse  {
+export interface ItemDetailResponse  {
   ok: boolean;
   product: ProductWithUser;
   relatedProducts: Product[];
-  isLiked:boolean
-  productId:number
-};
+  isLiked:boolean;
+  productId:number;
+}
 
 interface ChatroomResponse {
   ok: boolean;

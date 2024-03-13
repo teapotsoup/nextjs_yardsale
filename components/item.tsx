@@ -4,6 +4,7 @@ import useUser from "@libs/client/useUser";
 import useMutation from "@libs/client/useMutation";
 import { CiMenuKebab } from "react-icons/ci";
 import {useCallback, useState} from "react";
+import {useRouter } from "next/router";
 
 interface ItemProps {
   title: string;
@@ -20,7 +21,7 @@ interface ProductResponse{
 export default function Item({ title, price, hearts, id, userId }: ItemProps) {
   const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+    const router = useRouter();
 
   const [deletingProduct,] = useMutation<ProductResponse>(`/api/products/${id}/delete`);
   const handleDelete = ()=> {
@@ -29,7 +30,11 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
     }
   }
 
-  //
+  const handleEdit = useCallback((itemId:number)=>{
+      if(itemId){
+          router.push(`/products/${itemId}/edit`)
+      }
+  },[router])
     const handleIconBtn = useCallback(() => {
         setIsMenuOpen(prevState => !prevState);
     }, []);
@@ -58,11 +63,10 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
                   className="min-w-[70px] p-1 absolute font-[14px] rounded-lg  bg-white shadow-md flex flex-col gap-2 transition-all duration-300 left-[60px] items-center">
                   <div >
                       <div className="w-100 mb-1">
-                          <Button    text="수정" onClick={() => {
-                          }}/>
+                          <Button    text="수정" onClick={()=>handleEdit(id)}/>
                       </div>
                       <div className="w-100">
-                          <Button text="삭제" onClick={handleDelete}/>
+                          <Button text="삭제" onClick={()=>handleDelete}/>
 
                       </div>
                   </div>
