@@ -7,6 +7,7 @@ import {ChatMessage, Chatroom, User, Product } from '@prisma/client';
 import useUser from '@libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import useMutation from '@libs/client/useMutation';
+import {useEffect, useRef} from "react";
 
 interface ChatMessageWithUser extends ChatMessage {
   user: User;
@@ -30,6 +31,7 @@ interface MessageForm {
 const ChatDetail: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
+  const chatContainerRef = useRef(null);
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<ChatroomResponse>(
       router.query.id ? `/api/chats/${router.query.id}` : null,
@@ -37,9 +39,27 @@ const ChatDetail: NextPage = () => {
       //   refreshInterval: 1000,
       // }
   );
-  const [sendMessage, { loading, data: sendMessageData }] = useMutation(
+  const [sendMessage, { loading }] = useMutation(
       `/api/chats/${router.query.id}/messages`
   );
+  // useEffect(() => {
+  //   const chatContainer :any  = chatContainerRef.current;
+  //   if (chatContainer) {
+  //     chatContainer.scrollTop = chatContainer.scrollHeight;
+  //   }
+  // }, [data]);
+
+  useEffect(() => {
+    // Scroll to the bottom of the chat container
+    const chatContainer = document.querySelector('#chatCover');
+    if (chatContainer) {
+      // Use setTimeout to ensure the DOM is fully updated
+      setTimeout(() => {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 0);
+    }
+  }, [data]);
+
   const onValid = (form: MessageForm) => {
     if (loading) return;
     reset();
@@ -67,9 +87,12 @@ const ChatDetail: NextPage = () => {
     sendMessage(form);
   };
 
+
+
+
   return (
-    <Layout canGoBack title={user?.id === data?.chatroom?.buyer?.id ?  data?.chatroom?.seller?.name : data?.chatroom?.buyer?.name} productName={data?.chatroom?.product?.name}>
-      <div className="py-10 pb-16 px-4 space-y-4">
+    <Layout canGoBack title={user?.id === data?.chatroom?.buyer?.id ?  data?.chatroom?.seller?.name : data?.chatroom?.buyer?.name} productName={data?.chatroom?.product?.name} seoTitle={'Chatting'}>
+      <div  ref={chatContainerRef} id="chatCover" className="py-10 pb-16 px-4 space-y-4">
         {data?.chatroom?.chatMessages.map((message) => (
             <Message
                 key={message?.id}
@@ -79,7 +102,7 @@ const ChatDetail: NextPage = () => {
         ))}
         <form
             onSubmit={handleSubmit(onValid)}
-            className="fixed py-2 bg-white  bottom-0 inset-x-0"
+            className="fixed w-full max-w-2xl justify-center py-2 bg-white  bottom-0 "
         >
           <div className="flex relative max-w-md items-center  w-full mx-auto">
             <input

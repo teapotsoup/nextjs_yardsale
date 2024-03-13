@@ -3,7 +3,7 @@ import Button from "@components/button";
 import useUser from "@libs/client/useUser";
 import useMutation from "@libs/client/useMutation";
 import { CiMenuKebab } from "react-icons/ci";
-import {useCallback, useState} from "react";
+import {useCallback,useState} from "react"; //  useEffect, useRef,
 import {useRouter } from "next/router";
 
 interface ItemProps {
@@ -22,6 +22,7 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
   const { user } = useUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
     const router = useRouter();
+    // const menuRef = useRef<HTMLElement>(null); // Step 2: Create a reference for the menu
 
   const [deletingProduct,] = useMutation<ProductResponse>(`/api/products/${id}/delete`);
   const handleDelete = ()=> {
@@ -38,7 +39,21 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
     const handleIconBtn = useCallback(() => {
         setIsMenuOpen(prevState => !prevState);
     }, []);
-
+    // Step 3: Use useEffect to add an event listener
+    // useEffect(() => {
+    //     const checkIfClickedOutside = (e:any) => {
+    //         if (isMenuOpen && menuRef.current && !menuRef.current.contains(e.target)) {
+    //             setIsMenuOpen(false);
+    //         }
+    //     };
+    //
+    //     document.addEventListener("mousedown", checkIfClickedOutside);
+    //
+    //     // Step 4: Clean up the event listener
+    //     return () => {
+    //         document.removeEventListener("mousedown", checkIfClickedOutside);
+    //     };
+    // }, [isMenuOpen]);
   return (
       <div className="flex px-4 pt-5 cursor-pointer justify-between">
           <a>
@@ -56,7 +71,6 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
               {
                   user?.id === userId ? (
                           <CiMenuKebab onClick={handleIconBtn} size="24" color="#3b82f6" className="flex items-center space-y-10 "/>
-
                   ) : <div/>
                           }
               {isMenuOpen && <div
@@ -67,7 +81,6 @@ export default function Item({ title, price, hearts, id, userId }: ItemProps) {
                       </div>
                       <div className="w-100">
                           <Button text="삭제" onClick={()=>handleDelete()}/>
-
                       </div>
                   </div>
               </div>}

@@ -10,7 +10,7 @@ import { cls } from "@libs/client/utils";
 import useUser from "@libs/client/useUser";
 import Spinner from '../../../public/Spinner.gif';
 import Image from "next/image";
-import {useEffect} from "react";
+import {useCallback, useEffect} from "react";
 import client from "@libs/server/client";
 
 interface ProductWithUser extends Product {
@@ -31,9 +31,15 @@ interface ChatroomResponse {
   chatroomId: String;
 }
 
+interface ProductResponse{
+  ok:boolean;
+}
+
 const ItemDetail: NextPage = () => {
   const {user : sessionUser} = useUser()
   const router = useRouter();
+  const [deletingProduct,] = useMutation<ProductResponse>(`/api/products/${router.query.id}/delete`);
+
   const { data,mutate:boundMutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   ); // 라우터가 마운트 중일때 undefined가 뜨는 것을 방지
@@ -62,6 +68,18 @@ const ItemDetail: NextPage = () => {
     }
   }, [chatroomData, router]);
 
+  const handleEdit = useCallback((itemId:number)=>{
+    if(itemId){
+      router.push(`/products/${itemId}/edit`)
+    }
+  },[router])
+
+  const handleDelete = ()=> {
+    if(window.confirm("상품을 삭제하시겠습니까?")){
+      deletingProduct({})
+    }
+  }
+
   if(router.isFallback){
     return (
         <Layout hasTabBar canGoBack title={"Product Loading..."} seoTitle="Product Loading...">
@@ -74,31 +92,44 @@ const ItemDetail: NextPage = () => {
     <Layout hasTabBar canGoBack title={"Product Detail"} seoTitle="Product Detail">
       <div className="px-4  py-4">
         <div className="mb-8">
-              <><div className="h-96 bg-slate-300" />
-            <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
-              <div className="w-12 h-12 rounded-full bg-slate-300" />
-              <div>
-                <p className="text-sm font-medium text-white">
-                  {data?.product?.user?.name}
-                </p>
-                <Link href={sessionUser?.id === data?.product?.user?.id ? `/profile`  : `/profile/${data?.product?.user?.id}`}>
-                  <a className="text-xs font font-medium text-white">
-                    View profile &rarr;
-                  </a>
-                </Link>
-              </div>
-            </div>
-            <div className="mt-5">
-              <h1 className="text-3xl font-bold text-white">
-                {data?.product?.name}
-              </h1>
-              <p className="text-3xl block mt-3 text-white">
-                ${data?.product?.price}
-              </p>
-              <p className="text-base my-6 text-white">
-                {data?.product?.description}
-              </p>
-              {sessionUser?.id === data?.product?.user?.id ? null  :(<div className="flex items-center justify-between space-x-3">
+              <>
+                <div className="h-96 bg-slate-300" />
+                <div className="flex cursor-pointer py-3 border-t border-b items-center justify-between">
+                  <div className="flex space-x-3">
+                    <div className="w-12 h-12 rounded-full bg-slate-300"/>
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        {data?.product?.user?.name}
+                      </p>
+                      <Link
+                          href={sessionUser?.id === data?.product?.user?.id ? `/profile` : `/profile/${data?.product?.user?.id}`}>
+                        <a className="text-xs font font-medium text-white">
+                          View profile &rarr;
+                        </a>
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="flex space-x-3">
+                    <div className="w-100">
+                      <Button text="수정" onClick={() => handleEdit(Number(router.query.id))}/>
+                    </div>
+                    <div className="w-100">
+                      <Button text="삭제" onClick={() => handleDelete()}/>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5">
+                  <h1 className="text-3xl font-bold text-white">
+                    {data?.product?.name}
+                  </h1>
+                  <p className="text-3xl block mt-3 text-white">
+                    ${data?.product?.price}
+                  </p>
+                  <p className="text-base my-6 text-white">
+                    {data?.product?.description}
+                  </p>
+                  {sessionUser?.id === data?.product?.user?.id ? null : (
+                      <div className="flex items-center justify-between space-x-3">
                 <Button onClick = {onTalkToSellerClick} large text="Talk to seller" />
                 <button
                     onClick={onFavClick}
