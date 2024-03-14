@@ -40,7 +40,7 @@ const Edit: NextPage = () => {
     return (
         <Layout hasTabBar canGoBack title="Post Edit">
             <form onSubmit={handleSubmit(onValid)} className="p-4 space-y-4">
-                <TextArea register={register("question",{required:true, minLength:5} )} required />
+                <TextArea register={register("question",{required:true, minLength:1} )} required />
                 <Button text={loading ? "Loading...":"Edit"} />
             </form>
         </Layout>)
