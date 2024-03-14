@@ -72,7 +72,7 @@ const Reviews = () =>{
                 <div className="flex space-x-4 items-center">
                     <div className="w-12 h-12 rounded-full bg-slate-500" />
                     <div>
-                        <h4 className="text-sm font-bold text-gray-800">{review.createdBy.name}</h4>
+                        <h4 className="text-sm font-bold text-white">{review.createdBy.name}</h4>
                         <div className="flex items-center">
                             {[1, 2, 3, 4, 5].map((star) => (
                                 <svg

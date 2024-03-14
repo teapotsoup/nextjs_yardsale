@@ -31,34 +31,21 @@ interface MessageForm {
 const ChatDetail: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
   const chatContainerRef = useRef(null);
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<ChatroomResponse>(
       router.query.id ? `/api/chats/${router.query.id}` : null,
-      // {
-      //   refreshInterval: 1000,
-      // }
   );
+
   const [sendMessage, { loading }] = useMutation(
       `/api/chats/${router.query.id}/messages`
   );
-  // useEffect(() => {
-  //   const chatContainer :any  = chatContainerRef.current;
-  //   if (chatContainer) {
-  //     chatContainer.scrollTop = chatContainer.scrollHeight;
-  //   }
-  // }, [data]);
+
 
   useEffect(() => {
-    // Scroll to the bottom of the chat container
-    const chatContainer = document.querySelector('#chatCover');
-    if (chatContainer) {
-      // Use setTimeout to ensure the DOM is fully updated
-      setTimeout(() => {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }, 0);
-    }
-  }, [data]);
+    messageEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [data?.chatroom]);
 
   const onValid = (form: MessageForm) => {
     if (loading) return;
@@ -88,11 +75,9 @@ const ChatDetail: NextPage = () => {
   };
 
 
-
-
   return (
     <Layout canGoBack title={user?.id === data?.chatroom?.buyer?.id ?  data?.chatroom?.seller?.name : data?.chatroom?.buyer?.name} productName={data?.chatroom?.product?.name} seoTitle={'Chatting'}>
-      <div  ref={chatContainerRef} id="chatCover" className="py-10 pb-16 px-4 space-y-4">
+      <div ref={chatContainerRef} id="chatCover" className="py-10 pb-16 px-4 space-y-4">
         {data?.chatroom?.chatMessages.map((message) => (
             <Message
                 key={message?.id}
@@ -100,18 +85,20 @@ const ChatDetail: NextPage = () => {
                 reversed={Number(message.user.id) === Number(user?.id)}
             />
         ))}
+        <div ref={messageEndRef}></div>
         <form
             onSubmit={handleSubmit(onValid)}
-            className="fixed w-full max-w-2xl justify-center py-2 bg-white  bottom-0 "
+            className="fixed w-full max-w-2xl justify-center py-2 bg-white  bottom-0"
         >
           <div className="flex relative max-w-md items-center  w-full mx-auto">
             <input
-                {...register('message', { required: true })}
-              type="text"
-              className="shadow-sm rounded-full w-full border-gray-300 focus:ring-blue-500 focus:outline-none pr-12 focus:border-blue-500"
+                {...register('message', {required: true})}
+                type="text"
+                className="shadow-sm rounded-full w-full border-gray-300 focus:ring-blue-500 focus:outline-none pr-12 focus:border-blue-500"
             />
             <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
-              <button className="flex focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 items-center bg-blue-500 rounded-full px-3 hover:bg-blue-600 text-sm text-white">
+              <button
+                  className="flex focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 items-center bg-blue-500 rounded-full px-3 hover:bg-blue-600 text-sm text-white">
                 &rarr;
               </button>
             </div>

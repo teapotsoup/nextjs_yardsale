@@ -64,15 +64,19 @@ const Chats: NextPage = () => {
                       </div>
                     </a>
                   </Link>
-                  <div className="flex items-center">
-                    {user?.id === chatroom?.buyer?.id || user?.id === chatroom?.seller?.id ? (
-                        <div className="w-100 mr-2">
-                          <Button text="삭제" onClick={() => handleDeleteBtn(chatroom.id)}/>
-                        </div>) : null
-                    }
-                    <p className="text-white mr-3">{chatroom?.product?.name}</p>
-                    {user?.id === chatroom?.buyer?.id && (<p className="text-white">구매 물품</p>)}
-                    {user?.id === chatroom?.seller?.id && (<p className="text-white">판매 물품</p>)}
+                  <div className="flex justify-between items-center w-64 ">
+
+                      <div className="flex flex-col w-24 items-center justify-center border-white">
+                          {user?.id === chatroom?.buyer?.id && (
+                              <div className="w-100  rounded-full bg-blue-500 text-white p-1 text-xs border-2 border-white">구매</div>)}
+                          {user?.id === chatroom?.seller?.id && (<div className="w-100  rounded-full bg-blue-500 text-white p-1 text-xs border-2 border-white">판매</div>)}
+                          <p className="text-white">{chatroom?.product?.name}</p>
+                      </div>
+                      {user?.id === chatroom?.buyer?.id || user?.id === chatroom?.seller?.id ? (
+                          <div className="w-100 text-xs">
+                              <Button text="채팅방 삭제" onClick={() => handleDeleteBtn(chatroom.id)}/>
+                          </div>) : null
+                      }
                   </div>
                 </div>
           </div>
