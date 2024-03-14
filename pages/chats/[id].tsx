@@ -8,7 +8,6 @@ import useUser from '@libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import useMutation from '@libs/client/useMutation';
 import {useEffect, useRef, useState} from "react";
-import {io,Socket} from "socket.io-client";
 
 interface ChatMessageWithUser extends ChatMessage {
   user: User;
@@ -28,10 +27,7 @@ interface ChatroomResponse {
 interface MessageForm {
   message: string;
 }
-interface MessageEvent {
-  content: string;
-  userId: string;
-}
+
 const ChatDetail: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
@@ -39,29 +35,20 @@ const ChatDetail: NextPage = () => {
   const chatContainerRef = useRef(null);
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<ChatroomResponse>(
-      router.query.id ? `/api/chats/${router.query.id}` : null,
+      router.query.id ? `/api/chats/${router.query.id}` : null,{refreshInterval:1000}
   );
-  const [socket, setSocket] = useState<Socket<any, any> | null>(null);
 
   const [sendMessage, { loading }] = useMutation(
       `/api/chats/${router.query.id}/messages`
   );
 
+  console.log('데이터',data)
 
   useEffect(() => {
     messageEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [data?.chatroom]);
 
-  useEffect(() => {
-    const newSocket:any  = io();
-    setSocket(newSocket);
 
-    newSocket.on("message", (message: MessageEvent) => {
-      console.log(message);
-    });
-
-    return () => newSocket.disconnect();
-  }, []);
 
 
   const onValid = (form: MessageForm) => {
@@ -89,7 +76,6 @@ const ChatDetail: NextPage = () => {
         false
     );
     sendMessage(form);
-    socket?.emit("message", form.message);
   };
 
   return (
