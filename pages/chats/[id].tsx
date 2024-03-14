@@ -7,7 +7,7 @@ import {ChatMessage, Chatroom, User, Product } from '@prisma/client';
 import useUser from '@libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import useMutation from '@libs/client/useMutation';
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 
 interface ChatMessageWithUser extends ChatMessage {
   user: User;
@@ -28,6 +28,8 @@ interface MessageForm {
   message: string;
 }
 
+
+// polling 하고 싶으면 useSWR에 refreshInterval
 const ChatDetail: NextPage = () => {
   const { user } = useUser();
   const router = useRouter();
@@ -35,21 +37,31 @@ const ChatDetail: NextPage = () => {
   const chatContainerRef = useRef(null);
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<ChatroomResponse>(
-      router.query.id ? `/api/chats/${router.query.id}` : null,{refreshInterval:1000}
+      router.query.id ? `/api/chats/${router.query.id}` : null
   );
 
   const [sendMessage, { loading }] = useMutation(
       `/api/chats/${router.query.id}/messages`
   );
 
-  console.log('데이터',data)
+  useEffect(() => {
+    const eventSource = new EventSource('/api/sse');
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log(data); // 필요에 따라 데이터 처리
+      // 예를 들어, 상태를 업데이트하여 다시 렌더링을 트리거할 수 있습니다.
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
 
   useEffect(() => {
     messageEndRef?.current?.scrollIntoView({ behavior: 'smooth' });
   }, [data?.chatroom]);
-
-
-
 
   const onValid = (form: MessageForm) => {
     if (loading) return;
