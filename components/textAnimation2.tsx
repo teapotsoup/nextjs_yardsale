@@ -8,8 +8,8 @@ interface TextAnimation2 {
 export default  function TextAnimation2({text,size,weight}:TextAnimation2) {
     return (
             <div className={`content ${size} ${weight}`}>
-                <h3>{text}</h3>
-                <h3>{text}</h3>
+                <h2>{text}</h2>
+                <h2>{text}</h2>
             </div>
 
     );

@@ -42,14 +42,14 @@
     height: 3vh;
 }
 
-.content h3 {
+.content h2 {
     color: #fff;
     position: absolute;
 }
 
 .content h2:first-child {
     color: white;
-    -webkit-text-stroke: 1px #3b82f6;
+    /*-webkit-text-stroke: 1px #3b82f6;*/
 }
 
 .content h2:last-child {

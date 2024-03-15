@@ -37,26 +37,37 @@ const ChatDetail: NextPage = () => {
   const chatContainerRef = useRef(null);
   const { register, handleSubmit, reset } = useForm<MessageForm>();
   const { data, mutate } = useSWR<ChatroomResponse>(
-      router.query.id ? `/api/chats/${router.query.id}` : null
+      router.query.id ? `/api/chats/${router.query.id}` : null,
+      { refreshInterval: 1000 }
   );
 
   const [sendMessage, { loading }] = useMutation(
       `/api/chats/${router.query.id}/messages`
   );
 
-  useEffect(() => {
-    const eventSource = new EventSource('/api/sse');
-
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log(data); // 필요에 따라 데이터 처리
-      // 예를 들어, 상태를 업데이트하여 다시 렌더링을 트리거할 수 있습니다.
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const eventSource = new EventSource('/api/sse');
+  //   console.log('이벤트 소스 : ', eventSource)
+  //   eventSource.onmessage = (event) => {
+  //     const data = JSON.parse(event.data);
+  //     console.log(data); // 필요에 따라 데이터 처리
+  //
+  //     // mutate(
+  //     //     (prev)=> prev && ({
+  //     //       ...prev,
+  //     //       chatroom:{
+  //     //         ...prev.chatroom,
+  //     //         chatMessages: []
+  //     //       }
+  //     //     })
+  //     // )
+  //     // 예를 들어, 상태를 업데이트하여 다시 렌더링을 트리거할 수 있습니다.
+  //   };
+  //
+  //   return () => {
+  //     eventSource.close();
+  //   };
+  // }, []);
 
 
   useEffect(() => {
