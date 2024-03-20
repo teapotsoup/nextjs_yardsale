@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import Skeleton from 'react-loading-skeleton'
 import TextAnimation1 from "@components/textAnimation1";
 import TextAnimation2 from "@components/textAnimation2";
+import {AnimationBtn1} from "@components/AnimationBtn1";
 
 const Bs = dynamic(
   // @ts-ignore
@@ -168,7 +169,9 @@ const Enter: NextPage = () => {
                       </>
                   ) : null}
                   {method === "email" ? (
-                      <Button text={loading ? "Loading" : "Get login link"}/>
+                        <AnimationBtn1 width={'100%'} height={'30px'}>
+                          {loading ? "Loading" : "Get login link"}
+                        </AnimationBtn1>
                   ) : null}
                   {method === "phone" ? (
                       <Button text={loading ? "Loading" : "Get one-time password"}/>
