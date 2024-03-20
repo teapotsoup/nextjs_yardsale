@@ -36,7 +36,7 @@ export interface CommunityPostResponse {
   post: PostWithUser;
   answers:Answer[];
   isWondering: boolean;
-  id:any
+  id:number
 }
 
 interface AnswerResponse{

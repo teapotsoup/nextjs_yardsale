@@ -56,6 +56,7 @@ const Create: NextPage = () => {
                     register={register("description", { required: true })}
                     name="description"
                     label="Description"
+                    required
                 />
                 <Button text={loading ? "Loading..." : "Go live"} />
             </form>

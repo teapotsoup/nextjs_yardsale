@@ -7,7 +7,6 @@ interface InputProps {
     type:string
     register:UseFormRegisterReturn
     required:boolean
-    //[key: string]: any;
   }
   
   export default function Input({

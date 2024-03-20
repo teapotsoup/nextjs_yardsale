@@ -15,7 +15,9 @@ import client from "@libs/server/client";
 
 interface ProductWithUser extends Product {
   user: User;
-  _count:any
+  _count:{
+    records:number
+  }
 }
 
 export interface ItemDetailResponse  {

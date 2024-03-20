@@ -16,10 +16,12 @@ interface ProfileResponse {
     profile: receivedReviewsAndProductWithUser;
 }
 
-
 const Profile: NextPage<ProfileResponse> = () => {
     const router = useRouter();
     const {data} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
+
+    console.log(data?.profile?.products)
+
     return (
         <Layout canGoBack>
             <div className="py-10 px-4">
@@ -52,7 +54,7 @@ const Profile: NextPage<ProfileResponse> = () => {
                     <hr className="h-px my-2 bg-gray-700 border-0"/>
                 </div>
                 {data?.profile?.receivedReviews?.length! > 0 ?
-                    (data?.profile?.receivedReviews?.map((review : any) => (
+                    (data?.profile?.receivedReviews?.map((review : Review) => (
                     <div className="mt-5" key={review.id}>
                     <div className="flex space-x-4 items-center">
                     <div className="w-12 h-12 rounded-full bg-slate-500" />

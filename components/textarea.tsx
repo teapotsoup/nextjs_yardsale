@@ -3,10 +3,12 @@ import { UseFormRegisterReturn } from "react-hook-form";
 interface TextAreaProps {
     label?: string;
     name?: string;
-    register:UseFormRegisterReturn
-    [key: string]: any;
+    register:UseFormRegisterReturn;
+    placeholder ?: string;
+    required : boolean;
   }
-  
+
+
   export default function TextArea({ label, name,register, ...rest }: TextAreaProps) {
     return (
       <div>

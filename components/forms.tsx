@@ -1,4 +1,4 @@
-import { FieldErrors, SubmitErrorHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 type LoginForm = {
   username: string;
@@ -12,25 +12,18 @@ export default function Forms() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
     setError,
-    setValue,
-    reset,
-    resetField
   } = useForm<LoginForm>({ mode: "onSubmit" });
   //register는 input을 state에 연결시켜주는 역할
 
   const onValid = (data: LoginForm) => {
     setError("username", {message:"Taken username"})
-    //reset()
-    //resetField("password")
   };
 
   const onInValid = (errors: any) => {
     console.log(errors);
   };
-  //console.log(watch("email"))
-  //setValue("username", "hello");
+
   return (
     <form onSubmit={handleSubmit(onValid, onInValid)}>
       <input

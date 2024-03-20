@@ -5,7 +5,13 @@ import { unified } from "unified";
 import remarkParse from "remark-parse";
 import Layout from "@components/layout";
 
-const Post: NextPage<{ post: string; data: any }> = ({ post, data }) => {
+interface Dataprops{
+    category : string,
+    date: string,
+    title: string
+}
+
+const Post: NextPage<{ post: string; data: Dataprops }> = ({ post, data }) => {
     return (
         <Layout hasTabBar title={data.title} seoTitle={data.title}>
             <div
