@@ -20,10 +20,9 @@ const Profile: NextPage<ProfileResponse> = () => {
     const router = useRouter();
     const {data} = useSWR<ProfileResponse>(router.query.id ?`/api/users/profiles/${router.query.id}`: null);
 
-    console.log(data?.profile?.products)
 
     return (
-        <Layout canGoBack>
+        <Layout canGoBack seoTitle='Profile'>
             <div className="py-10 px-4">
                 <div className="flex items-center space-x-3">
                     <div className="w-16 h-16 bg-slate-500 rounded-full" />

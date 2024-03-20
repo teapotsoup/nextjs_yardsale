@@ -41,7 +41,7 @@ const Stream: NextPage = () => {
       }
   ); // 라우터가 마운트 중일때 undefined가 뜨는 것을 방지
 
-  const [sendMessage, {loading, data:sendMessageData}] = useMutation(
+  const [sendMessage, {loading}] = useMutation(
       `/api/streams/${router.query.id}/messages`
   )
   const onValid  = (form:MessageForm) =>{
@@ -72,13 +72,13 @@ const Stream: NextPage = () => {
   }
 
   return (
-    <Layout canGoBack>
+    <Layout canGoBack seoTitle='Streaming'>
       <div className="py-10 px-4  space-y-4">
         <div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
         <div className="mt-5">
-          <h1 className="text-3xl font-bold text-gray-900">{data?.stream?.name}</h1>
-          <span className="text-2xl block mt-3 text-gray-900">{data?.stream?.price}</span>
-          <p className=" my-6 text-gray-700">
+          <h1 className="text-3xl font-bold text-white">{data?.stream?.name}</h1>
+          <span className="text-2xl block mt-3 text-white">{data?.stream?.price}$</span>
+          <p className=" my-6 text-white">
             {data?.stream?.description}
           </p>
         </div>
