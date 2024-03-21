@@ -5,6 +5,7 @@ class CustomDocument extends Document {
         return (
             <Html lang="ko">
                 <Head>
+                    <link rel="icon" type="image/x-icon" href="../public/favicon.ico"/>
                     <link
                         href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap"
                         rel="stylesheet"

@@ -1,7 +1,7 @@
 ---
 title: Welcome Everyone
-date: 2022.02.02
-category: thougths
+date: 2024.03.21
+category: announce
 slug:
 ---
 

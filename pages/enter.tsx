@@ -18,7 +18,7 @@ const Bs = dynamic(
         new Promise((resolve) =>
             setTimeout(() => resolve(import("@components/bs")), 2000)
         ),
-    { ssr: false, suspense: true, loading: () => <span>loading</span> }
+    { ssr: false , loading: () => <span>loading</span> }
 );
 // 리액트는 임포트시 화면에 컴포넌트가 보이지 않더라도 다 자바스크립트로 다운로드함
 // 이는 불필요한 속도 저하가 발생할수 있음
@@ -169,9 +169,7 @@ const Enter: NextPage = () => {
                       </>
                   ) : null}
                   {method === "email" ? (
-                        <AnimationBtn1 width={'100%'} height={'30px'}>
-                          {loading ? "Loading" : "Get login link"}
-                        </AnimationBtn1>
+                      <Button text={loading ? "Loading" : "Get login link"}/>
                   ) : null}
                   {method === "phone" ? (
                       <Button text={loading ? "Loading" : "Get one-time password"}/>

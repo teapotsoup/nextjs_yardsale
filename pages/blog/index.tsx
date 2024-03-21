@@ -13,12 +13,12 @@ interface Post {
 const Blog : NextPage<{ posts: Post[] }> = ({posts}) => {
     return (
         <Layout hasTabBar title="Blog" seoTitle="Blog">
-            <h1 className="font-semibold text-center text-xl mt-5 mb-10">Latest Posts:</h1>
+            <h1 className="font-semibold text-center text-xl mt-5 mb-10 text-white">Latest Posts:</h1>
             {posts.map((post, index) => (
                 <div key={index} className="mb-5">
                     <Link href={`/blog/${post.slug}`}>
                         <a>
-                            <span className="text-lg text-red-500">{post.title}</span>
+                            <span className="text-lg text-white">{post.title}</span>
                             <div>
                 <span>
                   {post.date} / {post.category}

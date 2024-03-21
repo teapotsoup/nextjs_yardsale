@@ -12,11 +12,12 @@ interface Dataprops{
 }
 
 const Post: NextPage<{ post: string; data: Dataprops }> = ({ post, data }) => {
+    console.log(data)
     return (
         <Layout hasTabBar title={data.title} seoTitle={data.title}>
             <div
                 className="blog-post-content"
-                dangerouslySetInnerHTML={{ __html: post }}
+                dangerouslySetInnerHTML={{__html: post}}
             />
         </Layout>
     );
